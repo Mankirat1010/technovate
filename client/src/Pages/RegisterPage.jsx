@@ -18,6 +18,7 @@ export default function RegisterPage() {
         password: '',
         avatar: null,
         coverImage: null,
+        isOrganizer: false,
     });
 
     const [error, setError] = useState({
@@ -30,6 +31,7 @@ export default function RegisterPage() {
         avatar: '',
         coverImage: '',
     });
+
     const [disabled, setDisabled] = useState(false);
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
@@ -48,7 +50,7 @@ export default function RegisterPage() {
 
             if (!fileRestrictions(file)) {
                 return toast.error(
-                    `only png, jpg/jpeg files are allowed and File size should not exceed ${MAX_FILE_SIZE} MB.`
+                    `Only png, jpg/jpeg files are allowed and file size should not exceed ${MAX_FILE_SIZE} MB.`
                 );
             }
 
@@ -57,7 +59,7 @@ export default function RegisterPage() {
             name === 'avatar'
                 ? setError((prevError) => ({
                       ...prevError,
-                      avatar: 'avatar is required.',
+                      avatar: 'Avatar is required.',
                   }))
                 : setError((prevError) => ({ ...prevError, avatar: '' }));
         }
@@ -108,187 +110,63 @@ export default function RegisterPage() {
     }
 
     const inputFields = [
-        {
-            type: 'text',
-            name: 'userName',
-            label: 'Username',
-            placeholder: 'Enter user name',
-            required: true,
-        },
-        {
-            type: 'text',
-            name: 'firstName',
-            label: 'FirstName',
-            placeholder: 'Enter first name',
-            required: true,
-        },
-        {
-            type: 'text',
-            name: 'lastName',
-            label: 'LastName',
-            placeholder: 'Enter last name',
-            required: false,
-        },
-        {
-            type: 'text',
-            name: 'email',
-            label: 'Email',
-            placeholder: 'Enter email',
-            required: true,
-        },
-        {
-            type: showPassword ? 'text' : 'password',
-            name: 'password',
-            label: 'Password',
-            placeholder: 'Create password',
-            required: true,
-        },
+        { type: 'text', name: 'userName', label: 'Username', placeholder: 'Enter user name', required: true },
+        { type: 'text', name: 'firstName', label: 'FirstName', placeholder: 'Enter first name', required: true },
+        { type: 'text', name: 'lastName', label: 'LastName', placeholder: 'Enter last name', required: false },
+        { type: 'text', name: 'email', label: 'Email', placeholder: 'Enter email', required: true },
+        { type: showPassword ? 'text' : 'password', name: 'password', label: 'Password', placeholder: 'Create password', required: true },
     ];
 
     const fileFields = [
-        {
-            name: 'avatar',
-            label: 'Avatar',
-            required: true,
-        },
-        {
-            name: 'coverImage',
-            label: 'CoverImage',
-            required: false,
-        },
+        { name: 'avatar', label: 'Avatar', required: true },
+        { name: 'coverImage', label: 'CoverImage', required: false },
     ];
-
-    const inputElements = inputFields.map((field) => (
-        <div key={field.name} className="w-full">
-            <div className="bg-white z-[1] ml-3 px-2 w-fit relative top-3 font-medium">
-                <label htmlFor={field.name}>
-                    {field.required && <span className="text-red-500">* </span>}
-                    {field.label} :
-                </label>
-            </div>
-            <div className="relative">
-                <input
-                    type={field.type}
-                    name={field.name}
-                    id={field.name}
-                    value={inputs[field.name]}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    placeholder={field.placeholder}
-                    className="shadow-md shadow-[#f7f7f7] py-[15px] rounded-[5px] pl-[10px] w-full border-[0.01rem] border-gray-500 bg-transparent"
-                />
-                {field.name === 'password' && (
-                    <div
-                        onClick={() => setShowPassword((prev) => !prev)}
-                        className="size-[20px] absolute right-0 top-[50%] transform translate-y-[-50%] mr-4 cursor-pointer fill-[#474747]"
-                    >
-                        {showPassword ? icons.eyeOff : icons.eye}
-                    </div>
-                )}
-            </div>
-            {error[field.name] && (
-                <div className="mt-1 text-red-500 text-sm font-medium">
-                    {error[field.name]}
-                </div>
-            )}
-            {field.name === 'password' && !error.password && (
-                <div className="text-xs">password must be 8-12 characters.</div>
-            )}
-        </div>
-    ));
-
-    const fileElements = fileFields.map((field) => (
-        <div key={field.name} className="w-full">
-            <div className="bg-white z-[1] ml-3 px-2 w-fit relative top-3 font-medium">
-                <label htmlFor={field.name}>
-                    {field.required && <span className="text-red-500">* </span>}
-                    {field.label} :
-                </label>
-            </div>
-            <div>
-                <input
-                    type="file"
-                    name={field.name}
-                    id={field.name}
-                    onChange={handleFileChange}
-                    className="shadow-md shadow-[#f7f7f7] py-[15px] rounded-[5px] pl-[10px] border border-gray-500 w-full"
-                />
-            </div>
-            {error[field.name] && (
-                <div className="text-red-500 text-sm mt-1 font-medium">
-                    {error[field.name]}
-                </div>
-            )}
-        </div>
-    ));
 
     return (
         <div className="py-10 text-black flex flex-col items-center justify-start gap-4 overflow-y-scroll z-[1] bg-white fixed inset-0">
-            <Link
-                to={'/'}
-                className="w-fit flex items-center justify-center hover:brightness-95"
-            >
+            <Link to={'/'} className="w-fit flex items-center justify-center hover:brightness-95">
                 <div className="overflow-hidden rounded-full size-[90px] drop-shadow-md">
-                    <img
-                        src={LOGO}
-                        alt="peer connect logo"
-                        className="object-cover size-full"
-                    />
+                    <img src={LOGO} alt="peer connect logo" className="object-cover size-full" />
                 </div>
             </Link>
             <div className="w-fit">
-                <p className="text-center px-2 text-[28px] font-medium">
-                    Create a new Account
-                </p>
-                <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: '100%' }}
-                    transition={{ duration: 0.3 }}
-                    className="relative -top-2 h-[0.05rem] bg-[#333333]"
-                />
-                <p className="w-full text-center text-[16px]">
-                    already have an Account ?{' '}
-                    <Link
-                        to={'/login'}
-                        className="text-[#355ab6] hover:underline"
-                    >
-                        Login
-                    </Link>
-                </p>
+                <p className="text-center px-2 text-[28px] font-medium">Create a new Account</p>
+                <motion.div initial={{ width: 0 }} animate={{ width: '100%' }} transition={{ duration: 0.3 }} className="relative -top-2 h-[0.05rem] bg-[#333333]" />
+                <p className="w-full text-center text-[16px]">Already have an account? <Link to={'/login'} className="text-[#355ab6] hover:underline">Login</Link></p>
             </div>
 
             <div className="w-[400px] flex flex-col items-center justify-center gap-3">
-                {error.root && (
-                    <div className="text-red-500 w-full text-center">
-                        {error.root}
+                {error.root && <div className="text-red-500 w-full text-center">{error.root}</div>}
+
+                <form onSubmit={handleSubmit} className="flex flex-col items-start justify-center gap-4 w-full">
+                    {inputFields.map(field => (
+                        <div key={field.name} className="w-full">
+                            <label htmlFor={field.name}>{field.required && <span className="text-red-500">*</span>} {field.label}:</label>
+                            <input type={field.type} name={field.name} id={field.name} value={inputs[field.name]} onChange={handleChange} onBlur={handleBlur} placeholder={field.placeholder} className="shadow-md py-[15px] rounded-[5px] pl-[10px] w-full border-gray-500 bg-transparent" />
+                            {error[field.name] && <div className="mt-1 text-red-500 text-sm">{error[field.name]}</div>}
+                        </div>
+                    ))}
+
+                    {fileFields.map(field => (
+                        <div key={field.name} className="w-full">
+                            <label htmlFor={field.name}>{field.required && <span className="text-red-500">*</span>} {field.label}:</label>
+                            <input type="file" name={field.name} id={field.name} onChange={handleFileChange} className="shadow-md py-[15px] rounded-[5px] pl-[10px] border-gray-500 w-full" />
+                        </div>
+                    ))}
+
+                    <div className="w-full flex items-center gap-2">
+                        <input type="checkbox" id="isOrganizer" name="isOrganizer" checked={inputs.isOrganizer} onChange={(e) => setInputs(prev => ({ ...prev, isOrganizer: e.target.checked }))} />
+                        <label htmlFor="isOrganizer">Are you an Organizer?</label>
                     </div>
-                )}
 
-                <form
-                    onSubmit={handleSubmit}
-                    className="flex flex-col items-start justify-center gap-4 w-full"
-                >
-                    {inputElements}
+                    {inputs.isOrganizer && (
+                        <div className="w-full">
+                            <label htmlFor="organization">Organization Name:</label>
+                            <input type="text" name="organization" id="organization" value={inputs.organization} onChange={handleChange} placeholder="Enter organization name" className="shadow-md py-[15px] rounded-[5px] pl-[10px] w-full border-gray-500 bg-transparent" />
+                        </div>
+                    )}
 
-                    {fileElements}
-
-                    <div className="w-full">
-                        <Button
-                            type="submit"
-                            className="text-white rounded-md py-2 mt-4 h-[45px] flex items-center justify-center text-lg w-full bg-[#4977ec] hover:bg-[#3b62c2]"
-                            disabled={disabled}
-                            onMouseOver={onMouseOver}
-                            btnText={
-                                loading ? (
-                                    <div className="size-5 fill-[#4977ec] dark:text-[#a2bdff]">
-                                        {icons.loading}
-                                    </div>
-                                ) : (
-                                    'Sign Up'
-                                )
-                            }
-                        />
-                    </div>
+                    <Button type="submit" className="text-white rounded-md py-2 mt-4 h-[45px] w-full bg-[#4977ec]" disabled={disabled} onMouseOver={onMouseOver} btnText={loading ? icons.loading : 'Sign Up'} />
                 </form>
             </div>
         </div>
