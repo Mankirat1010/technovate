@@ -43,6 +43,17 @@ const userSchema = new Schema({
         type: String,
         required: true,
     },
+    organization_name: {
+        type: String,
+        index: true,
+        default:""
+    },
+    event_id:{
+        type:String, 
+        index:true,
+        ref:"Event",
+        default:""
+    },
     user_createdAt: {
         type: Date,
         default: Date.now(),
@@ -53,7 +64,7 @@ const userSchema = new Schema({
     },
 });
 
-const savedPostSchema = new Schema({
+const savedEventSchema = new Schema({
     post_id: {
         type: String,
         required: true,
@@ -90,11 +101,11 @@ const watchHistorySchema = new Schema({
 });
 
 userSchema.plugin(aggregatePaginate);
-savedPostSchema.plugin(aggregatePaginate);
+savedEventSchema.plugin(aggregatePaginate);
 watchHistorySchema.plugin(aggregatePaginate);
 
 const User = model('User', userSchema);
-const SavedPost = model('SavedPost', savedPostSchema);
+const SavedEvent = model('SavedEvent', savedEventSchema);
 const WatchHistory = model('WatchHistory', watchHistorySchema);
 
-export { User, SavedPost, WatchHistory };
+export { User, SavedEvent, WatchHistory };

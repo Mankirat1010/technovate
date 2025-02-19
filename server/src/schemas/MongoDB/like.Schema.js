@@ -1,10 +1,10 @@
 import { model, Schema } from 'mongoose';
 import aggregatePaginate from 'mongoose-aggregate-paginate-v2';
 
-const postLikeSchema = new Schema({
-    post_id: {
+const eventLikeSchema = new Schema({
+    event_id: {
         type: String,
-        ref: 'Post',
+        ref: 'event',
         required: true,
         index: true,
     },
@@ -24,8 +24,8 @@ const postLikeSchema = new Schema({
     },
 });
 
-const commentLikeSchema = new Schema({
-    comment_id: {
+const feedbackLikeSchema = new Schema({
+    feedback_id: {
         type: String,
         ref: 'Comment',
         required: true,
@@ -46,9 +46,9 @@ const commentLikeSchema = new Schema({
     },
 });
 
-postLikeSchema.plugin(aggregatePaginate);
+eventLikeSchema.plugin(aggregatePaginate);
 
-const PostLike = model('PostLike', postLikeSchema);
-const CommentLike = model('CommentLike', commentLikeSchema);
+const EventLike = model('EventLike', eventLikeSchema);
+const CommentLike = model('CommentLike', feedbackLikeSchema);
 
-export { PostLike, CommentLike };
+export { EventLike, CommentLike };

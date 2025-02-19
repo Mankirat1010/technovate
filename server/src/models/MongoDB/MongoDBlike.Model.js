@@ -1,5 +1,5 @@
 import { Ilikes } from '../../interfaces/like.Interface.js';
-import { CommentLike, PostLike } from '../../schemas/MongoDB/index.js';
+import { CommentLike, EventLike } from '../../schemas/MongoDB/index.js';
 import { getPipeline1 } from '../../helpers/index.js';
 
 export class MongoDBlikes extends Ilikes {
@@ -11,15 +11,15 @@ export class MongoDBlikes extends Ilikes {
                 ...pipeline1,
             ];
 
-            return await PostLike.aggregatePaginate(pipeline, { page, limit });
+            return await EventLike.aggregatePaginate(pipeline, { page, limit });
         } catch (err) {
             throw err;
         }
     }
 
-    async togglePostLike(userId, postId, likedStatus) {
+    async toggleEventLike(userId, postId, likedStatus) {
         try {
-            const existingRecord = await PostLike.findOne({
+            const existingRecord = await EventLike.findOne({
                 post_id: postId,
                 user_id: userId,
             }); // BSON data
@@ -33,7 +33,7 @@ export class MongoDBlikes extends Ilikes {
                     return await existingRecord.save();
                 }
             } else {
-                const record = await PostLike.create({
+                const record = await EventLike.create({
                     post_id: postId,
                     user_id: userId,
                     is_liked: likedStatus,

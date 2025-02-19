@@ -1,5 +1,5 @@
 import { Iposts } from '../../interfaces/post.Interface.js';
-import { Post, PostView, SavedPost } from '../../schemas/MongoDB/index.js';
+import { Event, EventView, SavedEvent } from '../../schemas/MongoDB/index.js';
 import { getPipeline1 } from '../../helpers/index.js';
 
 export class MongoDBposts extends Iposts {
@@ -7,7 +7,7 @@ export class MongoDBposts extends Iposts {
     async getRandomPosts(limit, orderBy, page, categoryId) {
         try {
             const pipeline = categoryId
-                ? [{ $match: { post_category: categoryId } }]
+                ? [{ $match: { event_category: categoryId } }]
                 : [];
 
             pipeline.push(
@@ -15,7 +15,7 @@ export class MongoDBposts extends Iposts {
                     {
                         $lookup: {
                             from: 'categories',
-                            localField: 'post_category',
+                            localField: 'event_category',
                             foreignField: 'category_id',
                             as: 'category',
                         },
@@ -24,7 +24,7 @@ export class MongoDBposts extends Iposts {
                     {
                         $lookup: {
                             from: 'users',
-                            localField: 'post_ownerId',
+                            localField: 'event_ownerId',
                             foreignField: 'user_id',
                             as: 'owner',
                             pipeline: [
@@ -44,35 +44,35 @@ export class MongoDBposts extends Iposts {
                     {
                         $lookup: {
                             from: 'postviews',
-                            localField: 'post_id',
-                            foreignField: 'post_id',
+                            localField: 'event_id',
+                            foreignField: 'event_id',
                             as: 'views',
                         },
                     },
-                    { $sort: { post_updatedAt: orderBy === 'DESC' ? -1 : 1 } },
+                    { $sort: { event_updatedAt: orderBy === 'DESC' ? -1 : 1 } },
                     { $addFields: { totalViews: { $size: '$views' } } },
-                    { $project: { post_category: 0, views: 0 } },
+                    { $project: { event_category: 0, views: 0 } },
                 ]
             );
 
-            return await Post.aggregatePaginate(pipeline, { page, limit });
+            return await Event.aggregatePaginate(pipeline, { page, limit });
         } catch (err) {
             throw err;
         }
     }
 
-    async getPosts(channelId, limit, orderBy, page, categoryId) {
+    async getEvents(channelId, limit, orderBy, page, categoryId) {
         try {
             const pipeline = categoryId
                 ? [
                       {
                           $match: {
-                              post_ownerId: channelId,
-                              post_category: categoryId,
+                              event_ownerId: channelId,
+                              event_category: categoryId,
                           },
                       },
                   ]
-                : [{ $match: { post_ownerId: channelId } }];
+                : [{ $match: { event_ownerId: channelId } }];
 
             // concat() returns a modified new array
             pipeline.push(
@@ -80,7 +80,7 @@ export class MongoDBposts extends Iposts {
                     {
                         $lookup: {
                             from: 'categories',
-                            localField: 'post_category',
+                            localField: 'event_category',
                             foreignField: 'category_id',
                             as: 'category',
                         },
@@ -89,39 +89,39 @@ export class MongoDBposts extends Iposts {
                     {
                         $lookup: {
                             from: 'postviews',
-                            localField: 'post_id',
-                            foreignField: 'post_id',
+                            localField: 'event_id',
+                            foreignField: 'event_id',
                             as: 'views',
                         },
                     },
-                    { $sort: { post_updatedAt: orderBy === 'DESC' ? -1 : 1 } },
+                    { $sort: { event_updatedAt: orderBy === 'DESC' ? -1 : 1 } },
                     { $addFields: { totalViews: { $size: '$views' } } },
-                    { $project: { post_category: 0, views: 0 } },
+                    { $project: { event_category: 0, views: 0 } },
                 ]
             );
 
-            return await Post.aggregatePaginate(pipeline, { page, limit });
+            return await Event.aggregatePaginate(pipeline, { page, limit });
         } catch (err) {
             throw err;
         }
     }
 
-    async postExistance(postId) {
+    async postExistance(eventId) {
         try {
-            return await Post.findOne({ post_id: postId }).lean();
+            return await Event.findOne({ event_id: eventId }).lean();
         } catch (err) {
             throw err;
         }
     }
 
-    async getPost(postId, userId) {
+    async getEvent(eventId, userId) {
         try {
             const pipeline = [
-                { $match: { post_id: postId } },
+                { $match: { event_id: eventId } },
                 {
                     $lookup: {
                         from: 'categories',
-                        localField: 'post_category',
+                        localField: 'event_category',
                         foreignField: 'category_id',
                         as: 'category',
                     },
@@ -130,7 +130,7 @@ export class MongoDBposts extends Iposts {
                 {
                     $lookup: {
                         from: 'users',
-                        localField: 'post_ownerId',
+                        localField: 'event_ownerId',
                         foreignField: 'user_id',
                         as: 'owner',
                     },
@@ -139,8 +139,8 @@ export class MongoDBposts extends Iposts {
                 {
                     $lookup: {
                         from: 'postlikes',
-                        localField: 'post_id',
-                        foreignField: 'post_id',
+                        localField: 'event_id',
+                        foreignField: 'event_id',
                         as: 'likes',
                         pipeline: [
                             { $match: { is_liked: true } },
@@ -151,8 +151,8 @@ export class MongoDBposts extends Iposts {
                 {
                     $lookup: {
                         from: 'postlikes',
-                        localField: 'post_id',
-                        foreignField: 'post_id',
+                        localField: 'event_id',
+                        foreignField: 'event_id',
                         as: 'dislikes',
                         pipeline: [
                             { $match: { is_liked: false } },
@@ -163,8 +163,8 @@ export class MongoDBposts extends Iposts {
                 {
                     $lookup: {
                         from: 'postviews',
-                        localField: 'post_id',
-                        foreignField: 'post_id',
+                        localField: 'event_id',
+                        foreignField: 'event_id',
                         as: 'views',
                     },
                 },
@@ -183,8 +183,8 @@ export class MongoDBposts extends Iposts {
                     {
                         $lookup: {
                             from: 'savedposts',
-                            localField: 'post_id',
-                            foreignField: 'post_id',
+                            localField: 'event_id',
+                            foreignField: 'event_id',
                             as: 'saved_posts',
                             pipeline: [{ $match: { user_id: userId } }],
                         },
@@ -192,7 +192,7 @@ export class MongoDBposts extends Iposts {
                     {
                         $lookup: {
                             from: 'followers',
-                            localField: 'post_ownerId',
+                            localField: 'event_ownerId',
                             foreignField: 'following_id',
                             as: 'followers',
                             pipeline: [{ $match: { follower_id: userId } }],
@@ -233,7 +233,7 @@ export class MongoDBposts extends Iposts {
 
             pipeline.push({ $project: { likes: 0, dislikes: 0, views: 0 } });
 
-            const [post] = await Post.aggregate(pipeline);
+            const [post] = await Event.aggregate(pipeline);
             return post;
         } catch (err) {
             throw err;
@@ -242,12 +242,12 @@ export class MongoDBposts extends Iposts {
 
     async createPost({ userId, title, content, categoryId, postImage }) {
         try {
-            const post = await Post.create({
-                post_ownerId: userId,
-                post_title: title,
-                post_content: content,
-                post_category: categoryId,
-                post_image: postImage,
+            const post = await Event.create({
+                event_ownerId: userId,
+                event_title: title,
+                event_content: content,
+                event_category: categoryId,
+                event_image: postImage,
             });
             return post.toObject();
         } catch (err) {
@@ -255,10 +255,10 @@ export class MongoDBposts extends Iposts {
         }
     }
 
-    async deletePost(postId) {
+    async deletePost(eventId) {
         try {
-            return await Post.findOneAndDelete({
-                post_id: postId,
+            return await Event.findOneAndDelete({
+                event_id: eventId,
             }).lean();
         } catch (err) {
             throw err;
@@ -266,16 +266,16 @@ export class MongoDBposts extends Iposts {
     }
 
     // TODO: can use pre-hook
-    async updatePostViews(postId, userIdentifier) {
+    async updatePostViews(eventId, userIdentifier) {
         try {
-            return await PostView.findOneAndUpdate(
+            return await EventView.findOneAndUpdate(
                 {
-                    post_id: postId,
+                    event_id: eventId,
                     user_identifier: userIdentifier,
                 },
                 {
                     $setOnInsert: {
-                        post_id: postId,
+                        event_id: eventId,
                         user_identifier: userIdentifier,
                     },
                 },
@@ -288,16 +288,16 @@ export class MongoDBposts extends Iposts {
         }
     }
 
-    async updatePostDetails({ postId, title, content, categoryId }) {
+    async updatePostDetails({ eventId, title, content, categoryId }) {
         try {
-            return await Post.findOneAndUpdate(
-                { post_id: postId },
+            return await Event.findOneAndUpdate(
+                { event_id: eventId },
                 {
                     $set: {
-                        post_title: title,
-                        post_content: content,
-                        post_category: categoryId,
-                        post_updatedAt: new Date(),
+                        event_title: title,
+                        event_content: content,
+                        event_category: categoryId,
+                        event_updatedAt: new Date(),
                     },
                 },
                 { new: true }
@@ -307,14 +307,14 @@ export class MongoDBposts extends Iposts {
         }
     }
 
-    async updatePostImage(postId, postImage) {
+    async updatePostImage(eventId, postImage) {
         try {
-            return await Post.findOneAndUpdate(
-                { post_id: postId },
+            return await Event.findOneAndUpdate(
+                { event_id: eventId },
                 {
                     $set: {
-                        post_image: postImage,
-                        post_updatedAt: new Date(),
+                        event_image: postImage,
+                        event_updatedAt: new Date(),
                     },
                 },
                 { new: true }
@@ -324,11 +324,11 @@ export class MongoDBposts extends Iposts {
         }
     }
 
-    async togglePostVisibility(postId, visibility) {
+    async togglePostVisibility(eventId, visibility) {
         try {
-            return await Post.findOneAndUpdate(
-                { post_id: postId },
-                { $set: { post_visibility: visibility } },
+            return await Event.findOneAndUpdate(
+                { event_id: eventId },
+                { $set: { event_visibility: visibility } },
                 { new: true }
             ).lean();
         } catch (err) {
@@ -336,18 +336,18 @@ export class MongoDBposts extends Iposts {
         }
     }
 
-    async toggleSavePost(userId, postId) {
+    async toggleSavePost(userId, eventId) {
         try {
-            const existingRecord = await SavedPost.findOne({
-                post_id: postId,
+            const existingRecord = await SavedEvent.findOne({
+                event_id: eventId,
                 user_id: userId,
             });
 
             if (existingRecord) {
                 return await existingRecord.deleteOne();
             } else {
-                const record = await SavedPost.create({
-                    post_id: postId,
+                const record = await SavedEvent.create({
+                    event_id: eventId,
                     user_id: userId,
                 });
                 return record.toObject();
@@ -361,7 +361,7 @@ export class MongoDBposts extends Iposts {
         try {
             const pipeline1 = getPipeline1(orderBy, 'savedAt');
             const pipeline = [{ $match: { user_id: userId } }, ...pipeline1];
-            return await SavedPost.aggregatePaginate(pipeline, { page, limit });
+            return await SavedEvent.aggregatePaginate(pipeline, { page, limit });
         } catch (err) {
             throw err;
         }

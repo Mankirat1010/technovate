@@ -9,7 +9,7 @@
         "start": "node src/server.js"
     },
     "keywords": [],
-    "author": "Sania",
+    "author": "Guardians of Galaxy",
     "license": "ISC",
     "description": "This is the backend for Peer Connect.",
     "dependencies": {

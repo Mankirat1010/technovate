@@ -3,7 +3,7 @@
     "private": true,
     "version": "0.0.0",
     "type": "module",
-    "author": "Sania",
+    "author": "Guradians of Galaxy",
     "description": "This is the frontend for Peer Connect.",
     "scripts": {
         "dev": "npm run format && vite",

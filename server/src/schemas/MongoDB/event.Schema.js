@@ -2,55 +2,68 @@ import { model, Schema } from 'mongoose';
 import aggregatePaginate from 'mongoose-aggregate-paginate-v2';
 import { v4 as uuid } from 'uuid';
 
-const postSchema = new Schema({
-    post_id: {
+const eventSchema = new Schema({
+    event_id: {
         type: String,
         unique: true,
         required: true,
         index: true,
         default: () => uuid(),
     },
-    post_image: {
+    event_image: {
         type: String,
         required: true,
     },
-    post_title: {
+    event_title: {
         type: String,
         required: true,
     },
-    post_content: {
+    event_content: {
         type: String,
         required: true,
     },
-    post_ownerId: {
+    event_ownerId: {
         type: String,
         ref: 'User',
         required: true,
     },
-    post_visibility: {
+    event_visibility: {
         type: Boolean,
         default: true,
         required: true,
     },
-    post_category: {
+    event_duration:{
+        type:String,
+        required:true,
+    },
+    event_venue:{
+        type:String,
+        required:true,
+    },
+    event_date:{
+        type:Date,
+        required:true,
+        index:true
+    },
+    event_category: {
         type: String,
         ref: 'Category',
         required: true,
     },
-    post_createdAt: {
+    event_createdAt: {
         type: Date,
         default: Date.now(),
     },
-    post_updatedAt: {
+    event_updatedAt: {
         type: Date,
         default: Date.now(),
     },
 });
 
-const postViewSchema = new Schema({
-    post_id: {
+const eventViewSchema = new Schema({
+    event_id: {
         type: String,
-        ref: 'Post',
+        ref: 'Event',
         required: true,
         index: true,
     },
@@ -61,9 +74,9 @@ const postViewSchema = new Schema({
     },
 });
 
-postSchema.plugin(aggregatePaginate);
+eventSchema.plugin(aggregatePaginate);
 
-const Post = model('Post', postSchema);
-const PostView = model('PostView', postViewSchema);
+const Event = model('Event', eventSchema);
+const EventView = model('EventView', eventViewSchema);
 
-export { Post, PostView };
+export { Event, EventView };
