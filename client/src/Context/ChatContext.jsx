@@ -1,0 +1,37 @@
+import { useContext, createContext, useState } from 'react';
+
+const ChatContext = createContext();
+
+const ChatContextProvider = ({ children }) => {
+    const [selectedChat, setSelectedChat] = useState(null);
+    const [messages, setMessages] = useState([]);
+    const [chats, setChats] = useState([]);
+    const [chatsLoaded, setChatsLoaded] = useState(false);
+    const [chatStatus, setChatStatus] = useState({
+        membersTyping: [],
+        membersOnline: [],
+    });
+
+    return (
+        <ChatContext.Provider
+            value={{
+                selectedChat,
+                messages,
+                chats,
+                chatsLoaded,
+                chatStatus,
+                setChatStatus,
+                setChatsLoaded,
+                setChats,
+                setSelectedChat,
+                setMessages,
+            }}
+        >
+            {children}
+        </ChatContext.Provider>
+    );
+};
+
+const useChatContext = () => useContext(ChatContext);
+
+export { useChatContext, ChatContextProvider };
