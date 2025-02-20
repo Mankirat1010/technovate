@@ -1,18 +1,18 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { likeService } from '../../Services';
-import { Button, PostListView } from '..';
+import { Button, EventListView } from '..';
 import { icons } from '../../Assets/icons';
 
-export default function LikedPostView({ likedPost, reference }) {
-    const { post_id } = likedPost;
+export default function LikedEventView({ likedEvent, reference }) {
+    const { event_id } = likedEvent;
     const [isLiked, setIsLiked] = useState(true);
     const navigate = useNavigate();
 
     async function toggleLike() {
         try {
-            const res = await likeService.togglePostLike(post_id, true);
-            if (res && res.message === 'post like toggled successfully') {
+            const res = await likeService.toggleEventLike(event_id, true);
+            if (res && res.message === 'event like toggled successfully') {
                 setIsLiked((prev) => !prev);
             }
         } catch (err) {
@@ -20,11 +20,11 @@ export default function LikedPostView({ likedPost, reference }) {
         }
     }
 
-    const { post, ...rest } = likedPost;
-    const modifiedPost = { ...rest, ...post };
+    const { event, ...rest } = likedEvent;
+    const modifiedEvent = { ...rest, ...event };
 
     return (
-        <PostListView post={modifiedPost} reference={reference}>
+        <EventListView event={modifiedEvent} reference={reference}>
             {/* children */}
             <div
                 className="absolute top-2 right-2"
@@ -46,6 +46,6 @@ export default function LikedPostView({ likedPost, reference }) {
                     onClick={toggleLike}
                 />
             </div>
-        </PostListView>
+        </EventListView>
     );
 }

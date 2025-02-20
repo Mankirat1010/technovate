@@ -4,7 +4,8 @@ import { Category } from '../../schemas/MongoDB/index.js';
 export class MongoDBcategories extends Icategories {
     async getCategories() {
         try {
-            return await Category.find().lean();
+            const category = await Category.find().lean();
+            return category;
         } catch (err) {
             throw err;
         }

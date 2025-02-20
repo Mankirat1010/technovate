@@ -1,8 +1,8 @@
 import { MongoDBusers } from './MongoDBuser.Model.js';
-import { MongoDBposts } from './MongoDBpost.Model.js';
+import { MongoDBevents } from './MongoDBpost.Model.js';
 import { MongoDBfollowers } from './MongoDBfollower.Model.js';
 import { MongoDBlikes } from './MongoDBlike.Model.js';
-import { MongoDBcomments } from './MongoDBcomment.Model.js';
+import { MongoDBfeedBacks } from './MongoDBfeedBacks.Model.js';
 import { MongoDBcategories } from './MongoDBcategory.Model.js';
 import { MongoDBchats } from './MongoDBchat.Model.js';
 import { MongoDBmessages } from './MongoDBmessage.Model.js';
@@ -11,10 +11,10 @@ import { MongoDBrequests } from './MongoDBrequest.Model.js';
 
 export {
     MongoDBusers,
-    MongoDBcomments,
+    MongoDBfeedBacks,
     MongoDBfollowers,
     MongoDBlikes,
-    MongoDBposts,
+    MongoDBevents,
     MongoDBcategories,
     MongoDBchats,
     MongoDBmessages,

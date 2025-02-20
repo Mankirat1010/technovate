@@ -1,13 +1,13 @@
 export class Ilikes {
-    async getLikedPosts(userId, orderBy, limit, page) {
-        throw new Error('Method getLikedPost not overwritten.');
+    async getLikedEvents(userId, orderBy, limit, page) {
+        throw new Error('Method getLikedEvents not overwritten.');
     }
 
-    async togglePostLike(userId, postId, likedStatus) {
-        throw new Error('Method togglePostLike not overwritten.');
+    async toggleEventLike(userId, eventId, likedStatus) {
+        throw new Error('Method toggleEventLike not overwritten.');
     }
 
-    async toggleCommentLike(userId, commentId, likedStatus) {
-        throw new Error('Method toggleCommentLike not overwritten.');
+    async toggleFeedBackLike(userId, feedBackId, likedStatus) {
+        throw new Error('Method toggleFeedBackLike not overwritten.');
     }
 }

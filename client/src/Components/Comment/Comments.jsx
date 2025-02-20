@@ -60,13 +60,15 @@ export default function Comments() {
         }
     }
 
-    const commentElements = comments?.map((comment) => (
-        <Comment
-            key={comment.comment_id}
-            comment={comment}
-            setComments={setComments}
-        />
-    ));
+    const commentElements =
+        comments ||
+        []?.map((comment) => (
+            <Comment
+                key={comment.comment_id}
+                comment={comment}
+                setComments={setComments}
+            />
+        ));
 
     return loading ? (
         <div>loading...</div>

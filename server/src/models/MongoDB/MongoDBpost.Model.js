@@ -1,10 +1,10 @@
-import { Iposts } from '../../interfaces/post.Interface.js';
 import { Event, EventView, SavedEvent } from '../../schemas/MongoDB/index.js';
+import { Ievents } from '../../interfaces/event.Interface.js';
 import { getPipeline1 } from '../../helpers/index.js';
 
-export class MongoDBposts extends Iposts {
+export class MongoDBevents extends Ievents {
     // pending search query
-    async getRandomPosts(limit, orderBy, page, categoryId) {
+    async getRandomEvents(limit, orderBy, page, categoryId) {
         try {
             const pipeline = categoryId
                 ? [{ $match: { event_category: categoryId } }]
@@ -43,7 +43,7 @@ export class MongoDBposts extends Iposts {
                     { $unwind: '$owner' },
                     {
                         $lookup: {
-                            from: 'postviews',
+                            from: 'eventviews',
                             localField: 'event_id',
                             foreignField: 'event_id',
                             as: 'views',
@@ -88,7 +88,7 @@ export class MongoDBposts extends Iposts {
                     { $unwind: '$category' },
                     {
                         $lookup: {
-                            from: 'postviews',
+                            from: 'eventviews',
                             localField: 'event_id',
                             foreignField: 'event_id',
                             as: 'views',
@@ -106,7 +106,7 @@ export class MongoDBposts extends Iposts {
         }
     }
 
-    async postExistance(eventId) {
+    async eventExistance(eventId) {
         try {
             return await Event.findOne({ event_id: eventId }).lean();
         } catch (err) {
@@ -138,7 +138,7 @@ export class MongoDBposts extends Iposts {
                 { $unwind: '$owner' },
                 {
                     $lookup: {
-                        from: 'postlikes',
+                        from: 'eventlikes',
                         localField: 'event_id',
                         foreignField: 'event_id',
                         as: 'likes',
@@ -150,7 +150,7 @@ export class MongoDBposts extends Iposts {
                 },
                 {
                     $lookup: {
-                        from: 'postlikes',
+                        from: 'eventlikes',
                         localField: 'event_id',
                         foreignField: 'event_id',
                         as: 'dislikes',
@@ -162,7 +162,7 @@ export class MongoDBposts extends Iposts {
                 },
                 {
                     $lookup: {
-                        from: 'postviews',
+                        from: 'eventviews',
                         localField: 'event_id',
                         foreignField: 'event_id',
                         as: 'views',
@@ -182,10 +182,10 @@ export class MongoDBposts extends Iposts {
                 pipeline.push(
                     {
                         $lookup: {
-                            from: 'savedposts',
+                            from: 'savedevents',
                             localField: 'event_id',
                             foreignField: 'event_id',
-                            as: 'saved_posts',
+                            as: 'saved_events',
                             pipeline: [{ $match: { user_id: userId } }],
                         },
                     },
@@ -201,7 +201,7 @@ export class MongoDBposts extends Iposts {
                     {
                         $addFields: {
                             isFollowed: { $gt: [{ $size: '$followers' }, 0] },
-                            isSaved: { $gt: [{ $size: '$saved_posts' }, 0] },
+                            isSaved: { $gt: [{ $size: '$saved_events' }, 0] },
                             isLiked: {
                                 $in: [
                                     userId,
@@ -233,29 +233,41 @@ export class MongoDBposts extends Iposts {
 
             pipeline.push({ $project: { likes: 0, dislikes: 0, views: 0 } });
 
-            const [post] = await Event.aggregate(pipeline);
-            return post;
+            const [event] = await Event.aggregate(pipeline);
+            return event;
         } catch (err) {
             throw err;
         }
     }
 
-    async createPost({ userId, title, content, categoryId, postImage }) {
+    async createEvent({
+        userId,
+        title,
+        content,
+        categoryId,
+        eventImage,
+        date,
+        venue,
+        duration,
+    }) {
         try {
-            const post = await Event.create({
+            const event = await Event.create({
                 event_ownerId: userId,
                 event_title: title,
                 event_content: content,
                 event_category: categoryId,
-                event_image: postImage,
+                event_image: eventImage,
+                event_date: date,
+                event_venue: venue,
+                event_duration: duration,
             });
-            return post.toObject();
+            return event.toObject();
         } catch (err) {
             throw err;
         }
     }
 
-    async deletePost(eventId) {
+    async deleteEvent(eventId) {
         try {
             return await Event.findOneAndDelete({
                 event_id: eventId,
@@ -266,7 +278,7 @@ export class MongoDBposts extends Iposts {
     }
 
     // TODO: can use pre-hook
-    async updatePostViews(eventId, userIdentifier) {
+    async updateEventViews(eventId, userIdentifier) {
         try {
             return await EventView.findOneAndUpdate(
                 {
@@ -288,7 +300,7 @@ export class MongoDBposts extends Iposts {
         }
     }
 
-    async updatePostDetails({ eventId, title, content, categoryId }) {
+    async updateEventDetails({ eventId, title, content, categoryId }) {
         try {
             return await Event.findOneAndUpdate(
                 { event_id: eventId },
@@ -307,13 +319,13 @@ export class MongoDBposts extends Iposts {
         }
     }
 
-    async updatePostImage(eventId, postImage) {
+    async updateEventImage(eventId, eventImage) {
         try {
             return await Event.findOneAndUpdate(
                 { event_id: eventId },
                 {
                     $set: {
-                        event_image: postImage,
+                        event_image: eventImage,
                         event_updatedAt: new Date(),
                     },
                 },
@@ -324,7 +336,7 @@ export class MongoDBposts extends Iposts {
         }
     }
 
-    async togglePostVisibility(eventId, visibility) {
+    async toggleEventVisibility(eventId, visibility) {
         try {
             return await Event.findOneAndUpdate(
                 { event_id: eventId },
@@ -336,7 +348,7 @@ export class MongoDBposts extends Iposts {
         }
     }
 
-    async toggleSavePost(userId, eventId) {
+    async toggleSaveEvent(userId, eventId) {
         try {
             const existingRecord = await SavedEvent.findOne({
                 event_id: eventId,
@@ -357,11 +369,14 @@ export class MongoDBposts extends Iposts {
         }
     }
 
-    async getSavedPosts(userId, orderBy, limit, page) {
+    async getSavedEvents(userId, orderBy, limit, page) {
         try {
             const pipeline1 = getPipeline1(orderBy, 'savedAt');
             const pipeline = [{ $match: { user_id: userId } }, ...pipeline1];
-            return await SavedEvent.aggregatePaginate(pipeline, { page, limit });
+            return await SavedEvent.aggregatePaginate(pipeline, {
+                page,
+                limit,
+            });
         } catch (err) {
             throw err;
         }

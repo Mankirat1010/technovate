@@ -4,7 +4,7 @@ import { verifyOrderBy, tryCatch, ErrorHandler } from '../utils/index.js';
 
 export const likeObject = getServiceObject('likes');
 
-const getLikedPosts = tryCatch('get liked posts', async (req, res, next) => {
+const getLikedEvents = tryCatch('get liked events', async (req, res, next) => {
     const { user_id } = req.user;
     const { orderBy = 'desc', limit = 10, page = 1 } = req.query;
 
@@ -12,7 +12,7 @@ const getLikedPosts = tryCatch('get liked posts', async (req, res, next) => {
         return next(new ErrorHandler('invalid orderBy value', BAD_REQUEST));
     }
 
-    const result = await likeObject.getLikedPosts(
+    const result = await likeObject.getLikedEvents(
         user_id,
         orderBy.toUpperCase(),
         Number(limit),
@@ -21,40 +21,43 @@ const getLikedPosts = tryCatch('get liked posts', async (req, res, next) => {
 
     if (result.docs.length) {
         const data = {
-            posts: result.docs,
-            postaInfo: {
+            events: result.docs,
+            eventInfo: {
                 hasNextPage: result.hasNextPage,
                 hasPrevPage: result.hasPrevPage,
-                totalPosts: result.totalDocs,
+                totalEvents: result.totalDocs,
             },
         };
         return res.status(OK).json(data);
     } else {
-        return res.status(OK).json({ message: 'no posts liked' });
+        return res.status(OK).json({ message: 'no events liked' });
     }
 });
 
-const togglePostLike = tryCatch('toggle post like', async (req, res) => {
+const toggleEventLike = tryCatch('toggle event like', async (req, res) => {
     const { user_id } = req.user;
-    const { postId } = req.params;
+    const { eventId } = req.params;
     let { likedStatus } = req.query;
 
     likedStatus = likedStatus === 'true' ? 1 : 0;
 
-    await likeObject.togglePostLike(user_id, postId, likedStatus);
-    return res.status(OK).json({ message: 'post like toggled successfully' });
+    await likeObject.toggleEventLike(user_id, eventId, likedStatus);
+    return res.status(OK).json({ message: 'event like toggled successfully' });
 });
 
-const toggleCommentLike = tryCatch('toggle comment like', async (req, res) => {
-    const { user_id } = req.user;
-    const { commentId } = req.params;
-    let { likedStatus } = req.query;
-    likedStatus = likedStatus === 'true' ? 1 : 0;
+const toggleFeedbackLike = tryCatch(
+    'toggle feedback like',
+    async (req, res) => {
+        const { user_id } = req.user;
+        const { feedBackId } = req.params;
+        let { likedStatus } = req.query;
+        likedStatus = likedStatus === 'true' ? 1 : 0;
 
-    await likeObject.toggleCommentLike(user_id, commentId, likedStatus);
-    return res
-        .status(OK)
-        .json({ message: 'comment like toggled successfully' });
-});
+        await likeObject.toggleFeedbackLike(user_id, feedBackId, likedStatus);
+        return res
+            .status(OK)
+            .json({ message: 'feedback like toggled successfully' });
+    }
+);
 
-export { getLikedPosts, togglePostLike, toggleCommentLike };
+export { getLikedEvents, toggleEventLike, toggleFeedbackLike };

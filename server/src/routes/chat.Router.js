@@ -12,6 +12,7 @@ import {
     getMyFriends,
     getChatDetails,
     makeAdmin,
+    addChat,
 } from '../controllers/chat.Controller.js';
 
 export const chatRouter = express.Router();
@@ -19,7 +20,7 @@ export const chatRouter = express.Router();
 const doesChatExist = doesResourceExist('chat', 'chatId', 'chat');
 
 chatRouter.use(verifyJwt);
-
+chatRouter.route('/').post(addChat);
 chatRouter.route('/groups/new').post(createGroup);
 
 chatRouter.route('/groups/leave/:chatId').patch(doesChatExist, leaveGroup);

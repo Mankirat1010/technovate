@@ -29,58 +29,63 @@ export default function AboutUsPage() {
                     About Us
                 </h1>
                 <p className="text-md">
-                    Welcome to <strong>Peer Connect</strong>, a platform created
-                    by students for students. We aim to provide a space where
-                    peers can share their thoughts, experiences, and ideas while
-                    building connections within the college community.
+                    Welcome to EventConnect, your go-to platform for
+                    discovering, organizing, and participating in exciting
+                    events! We aim to bring people together by providing a
+                    seamless experience for exploring and managing events,
+                    whether they are cultural festivals, tech meetups, college
+                    fests, or professional conferences.
                 </p>
                 <hr className="my-6" />
                 <h2 className="w-full text-center my-6">Our Mission</h2>
                 <p className="text-md">
-                    Our mission is to create a digital space that encourages
-                    collaboration, learning, and fun through writing. Whether
-                    it's about the latest campus event, personal experiences, or
-                    simply sharing knowledge, College Connect Blog serves as the
-                    go-to place for students to express themselves and connect
-                    with like-minded individuals.
+                    Our mission is to simplify event management and discovery by
+                    creating an interactive space where users can explore
+                    upcoming events, register with ease, and stay updated with
+                    real-time notifications. Whether you are an organizer
+                    looking for an efficient way to promote your event or an
+                    attendee eager to find new experiences, EventConnect is here
+                    for you!
                 </p>
                 <hr className="m-8" />
                 <h2 className="w-full text-center my-6">Why We Started?</h2>
                 <p className="text-md">
-                    As college students, we wanted a place where we could freely
-                    share our ideas and engage with others. We realized that
-                    many students have great stories to tell, but sometimes
-                    there isn't a dedicated space to share them. So, we decided
-                    to build College Connect Blog as a way to bridge that gap
-                    and provide a platform for communication and connection.
+                    We noticed that many event organizers face challenges in
+                    reaching their target audience, and attendees often struggle
+                    to find events that match their interests. To bridge this
+                    gap, we built EventConnect—a dynamic platform that connects
+                    event hosts with attendees, making event management more
+                    accessible and engaging.
                 </p>
                 <hr className="m-8" />
                 <h2 className="w-full text-center my-6">What We Do</h2>
                 <ul>
                     <li>
-                        <strong>Blog Posts:</strong> Articles written by
-                        students, for students, covering a wide range of topics
-                        from personal experiences to helpful tips and advice.
+                        <strong>Event Listings:</strong> Easily browse and
+                        filter events based on categories like technology,
+                        music, education, sports, and more.
                     </li>
                     <li>
-                        <strong>Collaboration:</strong> A place where students
-                        can collaborate on projects, share ideas, and make new
-                        connections.
+                        <strong>Seamless Registration:</strong> Sign up for
+                        events with a single click and get instant confirmation.
+                        Event Hosting: Organizers can create, manage, and
+                        promote their events effortlessly.
                     </li>
                     <li>
-                        <strong>Community Building:</strong> We believe in the
-                        power of community. Through College Connect, we aim to
-                        foster a positive, open environment where everyone can
-                        contribute.
+                        <strong>Community Interaction:</strong> Engage with
+                        fellow attendees, share experiences, and stay updated
+                        with real-time event notifications.
                     </li>
                 </ul>
                 <hr className="m-8" />
                 <h2 className="w-full text-center my-6">Meet the Team</h2>
                 <p className="text-md">
-                    Our team consists of passionate students who are eager to
-                    make a difference in the college community. We come from
-                    different zones, but we share a common goal: to build a
-                    space for students to connect, collaborate, and grow.
+                    We are a team of passionate individuals dedicated to
+                    enhancing event experiences for both organizers and
+                    attendees. With a shared vision of making event management
+                    seamless and efficient, we strive to bring people together
+                    through events that matter. Let me know if you'd like any
+                    further customizations! 🚀🎉
                 </p>
                 <div className="mt-10 flex flex-wrap justify-evenly gap-4 w-full">
                     {members}

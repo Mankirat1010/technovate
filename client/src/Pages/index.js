@@ -1,19 +1,19 @@
 import HomePage from './HomePage';
 import LoginPage from './LoginPage';
 import RegisterPage from './RegisterPage';
-import PostPage from './PostPage';
+import EventPage from './EventPage';
 import ChannelPage from './ChannelPage';
 import SettingsPage from './SettingsPage';
 import SupportPage from './SupportPage';
-import AddPostPage from './AddPostPage';
+import AddEventPage from './AddEventPage';
 import NotFoundPage from './NotFoundPage';
 import ServerErrorPage from './ServerErrorPage';
 import Redirect from './Redirect';
 import WatchHistoryPage from './WatchHistoryPage';
-import LikedPostsPage from './LikedPostsPage';
+import LikedEventsPage from './LikedEventsPage';
 import AdminPage from './AdminPage';
-import UpdatePostPage from './UpdatePostPage';
-import SavedPostsPage from './SavedPostsPage';
+import UpdateEventPage from './UpdateEventPage';
+import SavedEventsPage from './SavedEventsPage';
 import AboutUsPage from './AboutUsPage';
 import ContactUsPage from './ContactUsPage';
 import FAQpage from './FAQpage';
@@ -25,19 +25,19 @@ export {
     HomePage,
     LoginPage,
     RegisterPage,
-    PostPage,
+    EventPage,
     ChannelPage,
     SettingsPage,
     SupportPage,
-    AddPostPage,
+    AddEventPage,
     NotFoundPage,
     ServerErrorPage,
     Redirect,
     WatchHistoryPage,
-    LikedPostsPage,
+    LikedEventsPage,
     AdminPage,
-    UpdatePostPage,
-    SavedPostsPage,
+    UpdateEventPage,
+    SavedEventsPage,
     ContactUsPage,
     FAQpage,
     FollowersPage,

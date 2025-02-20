@@ -1,18 +1,22 @@
-import { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { postService } from '../../Services';
-import { paginate } from '../../Utils';
-import { icons } from '../../Assets/icons';
-import { LIMIT } from '../../Constants/constants';
-import { PostCardView } from '..';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { LikedEventView } from '../Components';
+import { likeService } from '../Services';
+import { paginate } from '../Utils';
+import { icons } from '../Assets/icons';
+import { LIMIT } from '../Constants/constants';
+import { useUserContext } from '../Context';
 
-export default function Recemendations({ category }) {
-    const { postId } = useParams();
+export default function LikedPostsPage() {
     const [posts, setPosts] = useState([]);
     const [postsInfo, setPostsInfo] = useState({});
-    const [loading, setLoading] = useState(true);
     const [page, setPage] = useState(1);
+    const [loading, setLoading] = useState(true);
+    const { user } = useUserContext();
     const navigate = useNavigate();
+
+    // pagination
+    const paginateRef = paginate(postsInfo?.hasNextPage, loading, setPage);
 
     useEffect(() => {
         const controller = new AbortController();
@@ -21,17 +25,13 @@ export default function Recemendations({ category }) {
         (async function getPosts() {
             try {
                 setLoading(true);
-                const res = await postService.getRandomPosts(
+                const res = await likeService.getLikedPosts(
                     signal,
-                    page,
                     LIMIT,
-                    category
+                    page
                 );
                 if (res && !res.message) {
-                    const recemendations = res.posts.filter(
-                        (post) => post.post_id !== postId
-                    );
-                    setPosts((prev) => [...prev, ...recemendations]);
+                    setPosts((prev) => [...prev, ...res.posts]);
                     setPostsInfo(res.postsInfo);
                 }
             } catch (err) {
@@ -41,32 +41,28 @@ export default function Recemendations({ category }) {
             }
         })();
 
-        return () => controller.abort();
-    }, [category, page]);
-
-    // pagination
-    const paginateRef = paginate(postsInfo?.hasNextPage, loading, setPage);
+        return () => {
+            controller.abort();
+        };
+    }, [page, user]);
 
     const postElements = posts?.map((post, index) => (
-        <PostCardView
+        <LikedEventView
             key={post.post_id}
-            post={post}
+            likedPost={post}
             reference={
                 index + 1 === posts.length && postsInfo?.hasNextPage
                     ? paginateRef
                     : null
             }
-            showOwnerInfo={true}
         />
     ));
 
-    return (
-        <div className="w-full h-full">
-            {postElements.length > 0 && (
-                <div className="w-full overflow-x-auto grid grid-flow-col auto-cols-[minmax(350px,350px)] gap-6">
-                    {postElements}
-                </div>
-            )}
+    return !user ? (
+        <div>Login to see liked posts</div>
+    ) : (
+        <div>
+            {postElements.length > 0 && <div>{postElements}</div>}
 
             {loading ? (
                 page === 1 ? (
@@ -81,11 +77,7 @@ export default function Recemendations({ category }) {
                     </div>
                 )
             ) : (
-                postElements.length === 0 && (
-                    <div className="text-lg text-[#363636]">
-                        No Similar Posts Found !!
-                    </div>
-                )
+                postElements.length === 0 && <div>No liked posts !!</div>
             )}
         </div>
     );

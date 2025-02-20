@@ -7,8 +7,20 @@ import { formatDistanceToNow, parseISO, format } from 'date-fns';
  * @example - about 1 month ago
  */
 
+// function formatDateRelative(timeStamp) {
+//     return formatDistanceToNow(parseISO(timeStamp), { addSuffix: true });
+// }
 function formatDateRelative(timeStamp) {
-    return formatDistanceToNow(parseISO(timeStamp), { addSuffix: true });
+    if (!timeStamp) {
+        console.warn('Warning: Timestamp is missing, using default date.');
+        timeStamp = new Date().toISOString(); // Default to current date
+    }
+    try {
+        return formatDistanceToNow(parseISO(timeStamp), { addSuffix: true });
+    } catch (error) {
+        console.error('Invalid date format:', timeStamp);
+        return 'Invalid date';
+    }
 }
 
 /**

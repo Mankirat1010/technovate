@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useChannelContext, useUserContext } from '../../Context';
-import { postService } from '../../Services';
+import { eventService } from '../../Services';
 import { icons } from '../../Assets/icons';
-import { PostCardView, Button } from '..';
+import { EventCardView, Button } from '..';
 import { paginate } from '../../Utils';
 import { LIMIT } from '../../Constants/constants';
 
@@ -24,7 +24,7 @@ export default function ChannelPosts() {
         (async function getChannelPosts() {
             try {
                 setLoading(true);
-                const res = await postService.getPosts(
+                const res = await eventService.getPosts(
                     signal,
                     channel.user_id,
                     LIMIT,
@@ -51,7 +51,7 @@ export default function ChannelPosts() {
 
     // displaying posts
     const postElements = posts?.map((post, index) => (
-        <PostCardView
+        <EventCardView
             key={post.post_id}
             post={post}
             reference={

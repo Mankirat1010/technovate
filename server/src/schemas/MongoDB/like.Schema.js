@@ -49,6 +49,6 @@ const feedbackLikeSchema = new Schema({
 eventLikeSchema.plugin(aggregatePaginate);
 
 const EventLike = model('EventLike', eventLikeSchema);
-const CommentLike = model('CommentLike', feedbackLikeSchema);
+const FeedBackLike = model('FeedBackLike', feedbackLikeSchema);
 
-export { EventLike, CommentLike };
+export { EventLike, FeedBackLike };

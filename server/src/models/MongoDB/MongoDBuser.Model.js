@@ -41,6 +41,7 @@ export class MongoDBusers extends Iusers {
         coverImage,
         email,
         password,
+        organisationName,
     }) {
         try {
             const user = await User.create({
@@ -51,6 +52,7 @@ export class MongoDBusers extends Iusers {
                 user_coverImage: coverImage,
                 user_email: email,
                 user_password: password,
+                organization_name: organisationName,
             });
 
             const { refresh_token, user_password, ...createdUser } =

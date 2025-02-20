@@ -28,9 +28,9 @@ if (process.env.NODE_ENV === 'production') {
 // Routes
 import {
     userRouter,
-    postRouter,
+    eventRouter,
     followerRouter,
-    commentRouter,
+    feedBackRouter,
     likeRouter,
     categoryRouter,
     chatRouter,
@@ -40,9 +40,9 @@ import {
 import { errorMiddleware } from './middlewares/index.js';
 
 app.use('/api/users', userRouter);
-app.use('/api/posts', postRouter);
+app.use('/api/events', eventRouter);
 app.use('/api/followers', followerRouter);
-app.use('/api/comments', commentRouter);
+app.use('/api/comments', feedBackRouter);
 app.use('/api/likes', likeRouter);
 app.use('/api/categories', categoryRouter);
 app.use('/api/chats', chatRouter);

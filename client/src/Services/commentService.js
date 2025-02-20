@@ -1,8 +1,8 @@
 class CommentService {
-    async getComments(signal, postId, orderBy = 'desc') {
+    async getComments(signal, eventId, orderBy = 'desc') {
         try {
             const res = await fetch(
-                `/api/comments/post/${postId}?orderBy=${orderBy}`,
+                `/api/comments/event/${eventId}?orderBy=${orderBy}`,
                 {
                     method: 'GET',
                     signal,
@@ -26,9 +26,9 @@ class CommentService {
         }
     }
 
-    async addComment(postId, content) {
+    async addComment(eventId, content) {
         try {
-            const res = await fetch(`/api/comments/${postId}`, {
+            const res = await fetch(`/api/comments/${eventId}`, {
                 method: 'POST',
                 credentials: 'include',
                 headers: { 'Content-Type': 'application/json' },

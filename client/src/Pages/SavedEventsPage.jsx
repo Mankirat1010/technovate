@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Button, SavedPostView } from '../Components';
-import { postService } from '../Services';
+import { Button, SavedEventView } from '../Components';
+import { eventService } from '../Services';
 import { useNavigate } from 'react-router-dom';
 import { icons } from '../Assets/icons';
 import { paginate } from '../Utils';
@@ -25,7 +25,7 @@ export default function SavedPostsPage() {
         (async function getSavedPosts() {
             try {
                 setLoading(true);
-                const res = await postService.getSavedPosts(
+                const res = await eventService.getSavedPosts(
                     signal,
                     LIMIT,
                     page
@@ -47,7 +47,7 @@ export default function SavedPostsPage() {
     }, [page, user]);
 
     const postElements = posts?.map((post, index) => (
-        <SavedPostView
+        <SavedEventView
             key={post.post_id}
             savedPost={post}
             reference={
@@ -66,7 +66,7 @@ export default function SavedPostsPage() {
                     }}
                 />
             </div>
-        </SavedPostView>
+        </SavedEventView>
     ));
 
     return !user ? (

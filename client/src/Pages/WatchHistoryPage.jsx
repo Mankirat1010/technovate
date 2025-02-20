@@ -1,5 +1,5 @@
 import { icons } from '../Assets/icons';
-import { Button, PostListView } from '../Components';
+import { Button, EventListView } from '../Components';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { userService } from '../Services';
@@ -65,7 +65,7 @@ export default function WatchHistoryPage() {
         const modifiedPost = { ...post, ...rest };
 
         return (
-            <PostListView
+            <EventListView
                 key={modifiedPost.post_id}
                 post={modifiedPost}
                 reference={
@@ -78,7 +78,7 @@ export default function WatchHistoryPage() {
                 <div className="sm:right-44 sm:bottom-8 sm:left-auto hover:cursor-text text-[15px] text-[#5a5a5a] absolute bottom-3 left-6">
                     watched {formatDateRelative(modifiedPost.watchedAt)}
                 </div>
-            </PostListView>
+            </EventListView>
         );
     });
 

@@ -3,9 +3,39 @@ import { OK, BAD_REQUEST } from '../constants/errorCodes.js';
 import { ErrorHandler, tryCatch } from '../utils/index.js';
 import { getOtherMembers } from '../helpers/index.js';
 import validator from 'validator';
+import { Chat } from '../schemas/MongoDB/chat.Schema.js';
 
 export const chatObject = getServiceObject('chats');
 
+async function addChat() {
+    try {
+        const chatData = {
+            chat_id: 'a3e1065b-a02d-4eb3-bd05-26fdbf1ee423',
+            isGroupChat: false,
+            creator: 'user_101',
+            members: [
+                {
+                    user_id: 'user_101',
+                    role: 'admin',
+                },
+                {
+                    user_id: 'user_202',
+                    role: 'member',
+                },
+            ],
+            lastMessage: {
+                message: 'Hey, how are you?',
+                time: '2024-02-20T12:45:00Z',
+            },
+        };
+
+        // Document insert karo
+        const result = await Chat.create(chatData);
+        console.log(`Chat inserted with ID: ${result.insertedId}`);
+    } catch (error) {
+        console.error('Error inserting chat:', error);
+    }
+}
 // all chats
 const getMyChats = tryCatch('get my chats', async (req, res) => {
     const myId = req.user.user_id;
@@ -407,6 +437,7 @@ const makeAdmin = tryCatch('make admin', async (req, res, next) => {
 });
 
 export {
+    addChat,
     getChatDetails,
     getMyChats,
     getMyFriends,

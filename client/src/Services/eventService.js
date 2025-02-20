@@ -1,5 +1,5 @@
-class PostService {
-    async getRandomPosts(
+class EventService {
+    async getRandomEvents(
         signal,
         page = 1,
         limit = 10,
@@ -8,7 +8,7 @@ class PostService {
     ) {
         try {
             const res = await fetch(
-                `/api/posts/all?limit=${limit}&orderBy=${orderBy}&page=${page}&category=${category}`,
+                `/api/events/all?limit=${limit}&orderBy=${orderBy}&page=${page}&category=${category}`,
                 {
                     method: 'GET',
                     signal,
@@ -25,18 +25,18 @@ class PostService {
             return data;
         } catch (err) {
             if (err.name === 'AbortError') {
-                console.log('get random posts request aborted.');
+                console.log('get random events request aborted.');
             } else {
-                console.error('error in getRandomPosts service', err);
+                console.error('error in getRandomevents service', err);
                 throw err;
             }
         }
     }
 
-    async getPosts(signal, channelId, limit = 10, page = 1, orderBy = 'desc') {
+    async getEvents(signal, channelId, limit = 10, page = 1, orderBy = 'desc') {
         try {
             const res = await fetch(
-                `/api/posts/channel/${channelId}?limit=${limit}&orderBy=${orderBy}&page=${page}`,
+                `/api/events/channel/${channelId}?limit=${limit}&orderBy=${orderBy}&page=${page}`,
                 { signal, method: 'GET' }
             );
 
@@ -49,17 +49,17 @@ class PostService {
             return data;
         } catch (err) {
             if (err.name === 'AbortError') {
-                console.log('get posts request aborted.');
+                console.log('get events request aborted.');
             } else {
-                console.error('error in getPosts service', err);
+                console.error('error in getevents service', err);
                 throw err;
             }
         }
     }
 
-    async getPost(signal, postId) {
+    async getEvent(signal, postId) {
         try {
-            const res = await fetch(`/api/posts/post/${postId}`, {
+            const res = await fetch(`/api/events/event/${postId}`, {
                 method: 'GET',
                 credentials: 'include',
                 signal,
@@ -82,9 +82,9 @@ class PostService {
         }
     }
 
-    async updatePostDetails(inputs, postId) {
+    async updateEventDetails(inputs, postId) {
         try {
-            const res = await fetch(`/api/posts/details/${postId}`, {
+            const res = await fetch(`/api/events/details/${postId}`, {
                 method: 'PATCH',
                 credentials: 'include',
                 headers: { 'Content-Type': 'application/json' },
@@ -104,12 +104,12 @@ class PostService {
         }
     }
 
-    async updatePostImage(postImage, postId) {
+    async updateEventImage(postImage, postId) {
         try {
             const formData = new FormData();
             formData.append('postImage', postImage);
 
-            const res = await fetch(`/api/posts/image/${postId}`, {
+            const res = await fetch(`/api/events/image/${postId}`, {
                 method: 'PATCH',
                 credentials: 'include',
                 body: formData,
@@ -128,9 +128,9 @@ class PostService {
         }
     }
 
-    async deletePost(postId) {
+    async deleteEvent(postId) {
         try {
-            const res = await fetch(`/api/posts/delete/${postId}`, {
+            const res = await fetch(`/api/events/delete/${postId}`, {
                 method: 'DELETE',
                 credentials: 'include',
             });
@@ -148,14 +148,14 @@ class PostService {
         }
     }
 
-    async addPost(inputs) {
+    async addEvent(inputs) {
         try {
             const formData = new FormData();
             Object.entries(inputs).forEach(([key, value]) => {
                 formData.append(key, value);
             });
 
-            const res = await fetch('/api/posts/add', {
+            const res = await fetch('/api/events/add', {
                 method: 'POST',
                 credentials: 'include',
                 body: formData,
@@ -174,9 +174,9 @@ class PostService {
         }
     }
 
-    async togglePostVisibility(postId) {
+    async toggleEventVisibility(postId) {
         try {
-            const res = await fetch(`/api/posts/visibility/${postId}`, {
+            const res = await fetch(`/api/events/visibility/${postId}`, {
                 method: 'PATCH',
                 credentials: 'include',
             });
@@ -194,10 +194,10 @@ class PostService {
         }
     }
 
-    async getSavedPosts(signal, limit = 10, page = 1, orderBy = 'desc') {
+    async getSavedEvents(signal, limit = 10, page = 1, orderBy = 'desc') {
         try {
             const res = await fetch(
-                `/api/posts/saved?orderBy=${orderBy}&limit=${limit}&page=${page}`,
+                `/api/events/saved?orderBy=${orderBy}&limit=${limit}&page=${page}`,
                 {
                     method: 'GET',
                     credentials: 'include',
@@ -214,17 +214,17 @@ class PostService {
             return data;
         } catch (err) {
             if (err.name === 'AbortError') {
-                console.log('get saved posts request aborted.');
+                console.log('get saved events request aborted.');
             } else {
-                console.error('error in getSavedPosts service', err);
+                console.error('error in getSavedevents service', err);
                 throw err;
             }
         }
     }
 
-    async toggleSavePost(postId) {
+    async toggleSaveEvent(eventId) {
         try {
-            const res = await fetch(`/api/posts/toggle-save/${postId}`, {
+            const res = await fetch(`/api/events/toggle-save/${eventId}`, {
                 method: 'POST',
                 credentials: 'include',
             });
@@ -237,10 +237,10 @@ class PostService {
             }
             return data;
         } catch (err) {
-            console.error('error in toggleSavePost service', err);
+            console.error('error in toggleSaveEvent service', err);
             throw err;
         }
     }
 }
 
-export const postService = new PostService();
+export const eventService = new EventService();

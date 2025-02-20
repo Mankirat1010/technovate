@@ -1,38 +1,41 @@
 import { useNavigate } from 'react-router-dom';
 import { icons } from '../../Assets/icons';
 import { formatDateExact, formatCount } from '../../Utils';
-import { postService } from '../../Services';
+import { eventService } from '../../Services';
 import { Button } from '..';
 import toast from 'react-hot-toast';
 
-export default function AdminPostRow({ post, reference, setPosts }) {
+export default function AdminEventRow({ event, reference, setEvents }) {
     const {
-        post_id,
-        post_title,
-        post_image,
-        post_visibility,
-        post_createdAt,
+        event_id,
+        event_title,
+        event_image,
+        event_visibility,
+        event_createdAt,
         totalLikes,
         totalDislikes,
         category_name,
         totalViews,
         totalComments,
-    } = post;
+    } = event;
 
     const navigate = useNavigate();
 
-    async function togglePostVisibility() {
+    async function toggleEventVisibility() {
         try {
-            const res = await postService.togglePostVisibility(post_id);
-            if (res && res.message === 'post visibility toggled successfully') {
-                setPosts((prev) =>
-                    prev.map((post) => {
-                        if (post.post_id === post_id) {
+            const res = await eventService.toggleEventVisibility(event_id);
+            if (
+                res &&
+                res.message === 'event visibility toggled successfully'
+            ) {
+                setEvents((prev) =>
+                    prev.map((event) => {
+                        if (event.event_id === event_id) {
                             return {
-                                ...post,
-                                post_visibility: !post.post_visibility,
+                                ...event,
+                                event_visibility: !event.event_visibility,
                             };
-                        } else return post;
+                        } else return event;
                     })
                 );
             }
@@ -41,16 +44,15 @@ export default function AdminPostRow({ post, reference, setPosts }) {
         }
     }
 
-    async function deletePost() {
+    async function deleteEvent() {
         try {
-            const res = await postService.deletePost(post_id);
-            if (res && res.message === 'post deleted successfully') {
-                toast.success('Post deleted successfully');
-                setPosts((prev) =>
-                    prev.filter((post) => post.post_id !== post_id)
+            const res = await eventService.deleteEvent(event_id);
+            if (res && res.message === 'event deleted successfully') {
+                toast.success('Event deleted successfully');
+                setEvents((prev) =>
+                    prev.filter((event) => event.event_id !== event_id)
                 );
             }
-            ``;
         } catch (err) {
             navigate('/server-error');
         }
@@ -64,15 +66,15 @@ export default function AdminPostRow({ post, reference, setPosts }) {
             <td className="">
                 <div className="flex items-center justify-center">
                     <label
-                        htmlFor={post_id}
+                        htmlFor={event_id}
                         className="relative inline-block w-12 cursor-pointer overflow-hidden"
                     >
                         <input
                             type="checkbox"
-                            id={post_id}
+                            id={event_id}
                             className="peer sr-only"
-                            checked={post_visibility}
-                            onChange={togglePostVisibility}
+                            checked={event_visibility}
+                            onChange={toggleEventVisibility}
                         />
 
                         {icons.toggle}
@@ -82,7 +84,7 @@ export default function AdminPostRow({ post, reference, setPosts }) {
 
             <td className="text-center px-8">
                 <div className="w-[130px] flex items-center justify-center">
-                    {post_visibility ? (
+                    {event_visibility ? (
                         <div className="border-[0.1rem] border-[#008300] text-lg rounded-full px-3 text-[#008300]">
                             Published
                         </div>
@@ -96,25 +98,25 @@ export default function AdminPostRow({ post, reference, setPosts }) {
 
             <td className="py-[13px]">
                 <div
-                    onClick={() => navigate(`/post/${post_id}`)}
+                    onClick={() => navigate(`/event/${event_id}`)}
                     className="flex items-center justify-start w-full cursor-pointer"
                 >
                     <div className="size-[45px] rounded-full overflow-hidden">
                         <img
-                            src={post_image}
-                            alt={post_title}
+                            src={event_image}
+                            alt={event_title}
                             className="size-full object-cover"
                         />
                     </div>
                     <div className="text-[1.1rem] font-medium ml-4 overflow-hidden text-ellipsis whitespace-nowrap max-w-[250px]">
-                        {post_title}
+                        {event_title}
                     </div>
                 </div>
             </td>
 
             <td className=" text-center text-[1.1rem]">{category_name}</td>
             <td className=" text-center text-[1.1rem]">
-                {formatDateExact(post_createdAt)}
+                {formatDateExact(event_createdAt)}
             </td>
             <td className=" text-center text-[1.1rem] ">
                 {formatCount(totalViews)}
@@ -137,7 +139,7 @@ export default function AdminPostRow({ post, reference, setPosts }) {
             <td className="">
                 <div className="flex items-center justify-center gap-4">
                     <Button
-                        onClick={deletePost}
+                        onClick={deleteEvent}
                         title="Delete"
                         className="bg-[#ffffff] group p-2 rounded-full drop-shadow-md w-fit"
                         btnText={
@@ -148,7 +150,7 @@ export default function AdminPostRow({ post, reference, setPosts }) {
                     />
                     <Button
                         title="Edit"
-                        onClick={() => navigate(`/update/${post_id}`)}
+                        onClick={() => navigate(`/update/${event_id}`)}
                         className="bg-[#ffffff] p-2 group rounded-full drop-shadow-md w-fit"
                         btnText={
                             <div className="size-[20px] fill-black group-hover:fill-[#2256db]">

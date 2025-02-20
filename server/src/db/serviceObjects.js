@@ -1,9 +1,9 @@
 import {
     MongoDBusers,
-    MongoDBposts,
+    MongoDBevents,
     MongoDBlikes,
     MongoDBfollowers,
-    MongoDBcomments,
+    MongoDBfeedBacks,
     MongoDBcategories,
     MongoDBchats,
     MongoDBmessages,
@@ -14,9 +14,9 @@ import {
 const serviceMap = {
     MongoDB: {
         users: MongoDBusers,
-        posts: MongoDBposts,
+        events: MongoDBevents,
         likes: MongoDBlikes,
-        comments: MongoDBcomments,
+        feedBacks: MongoDBfeedBacks,
         followers: MongoDBfollowers,
         categories: MongoDBcategories,
         chats: MongoDBchats,

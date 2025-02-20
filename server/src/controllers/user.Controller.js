@@ -20,13 +20,15 @@ export const userObject = getServiceObject('users');
 const registerUser = tryCatch('register user', async (req, res, next) => {
     let coverImageURL, avatarURL;
     try {
-        const { userName, email, firstName, lastName, password } = req.body;
+        const { userName, email, firstName, lastName, password, organization } =
+            req.body;
         const data = {
             userName,
             firstName,
             lastName,
             email,
             password,
+            organization,
             avatar: req.files?.avatar?.[0].path,
             coverImage: req.files?.coverImage?.[0].path,
         };

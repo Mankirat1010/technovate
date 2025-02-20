@@ -15,7 +15,7 @@ import {
     LoginPage,
     HomePage,
     RegisterPage,
-    PostPage,
+    EventPage,
     ChannelPage,
     FollowersPage,
     ServerErrorPage,
@@ -24,11 +24,11 @@ import {
     SupportPage,
     Redirect,
     WatchHistoryPage,
-    LikedPostsPage,
-    AddPostPage,
+    LikedEventsPage,
+    AddEventPage,
     AdminPage,
-    UpdatePostPage,
-    SavedPostsPage,
+    UpdateEventPage,
+    SavedEventsPage,
     AboutUsPage,
     ContactUsPage,
     FAQpage,
@@ -51,7 +51,7 @@ import {
     UpdateChannelDetails,
     UpdatePassword,
     ChannelAbout,
-    ChannelPosts,
+    ChannelEvents,
     ChatLayout,
     Details,
     NoChatSelected,
@@ -87,11 +87,11 @@ const router = createBrowserRouter(
             <Route path="" element={<HomePage />} />
             <Route path="login" element={<LoginPage />} />
             <Route path="register" element={<RegisterPage />} />
-            <Route path="post/:postId" element={<PostPage />} />
+            <Route path="event/:eventId" element={<EventPage />} />
             <Route path="followers" element={<FollowersPage />} />
             <Route path="history" element={<WatchHistoryPage />} />
-            <Route path="liked" element={<LikedPostsPage />} />
-            <Route path="saved" element={<SavedPostsPage />} />
+            <Route path="liked" element={<LikedEventsPage />} />
+            <Route path="saved" element={<SavedEventsPage />} />
             <Route path="chat" element={<ChatsPage />}>
                 <Route path="" element={<NoChatSelected />} />
                 <Route path=":chatId" element={<ChatLayout />}>
@@ -116,15 +116,15 @@ const router = createBrowserRouter(
                 path="add"
                 element={
                     <Redirect path="/login">
-                        <AddPostPage />
+                        <AddEventPage />
                     </Redirect>
                 }
             />
             <Route
-                path="update/:postId"
+                path="update/:eventId"
                 element={
                     <Redirect path="/login">
-                        <UpdatePostPage />
+                        <UpdateEventPage />
                     </Redirect>
                 }
             />
@@ -161,7 +161,7 @@ const router = createBrowserRouter(
                     </ChannelContextProvider>
                 }
             >
-                <Route path="" element={<ChannelPosts />} />
+                <Route path="" element={<ChannelEvents />} />
                 <Route path="about" element={<ChannelAbout />} />
             </Route>
 

@@ -4,20 +4,20 @@ import {
     requestService,
     followerService,
     likeService,
-    postService,
+    eventService,
 } from '../Services';
-import { Button, Comments, Recemendations } from '../Components';
+import { Button, Comments, Recommendations } from '../Components';
 import { formatDateRelative, formatCount } from '../Utils';
 import { useUserContext, usePopupContext } from '../Context';
 import { icons } from '../Assets/icons';
 import parse from 'html-react-parser';
 import toast from 'react-hot-toast';
 
-export default function PostPage() {
-    const { postId } = useParams();
+export default function EventPage() {
+    const { eventId } = useParams();
     const [loading, setLoading] = useState(true);
     const { setPopupInfo, setShowPopup } = usePopupContext();
-    const [post, setPost] = useState({});
+    const [event, setEvent] = useState({});
     const [requestStatus, setRequestStatus] = useState('');
     const { user } = useUserContext();
     const navigate = useNavigate();
@@ -26,12 +26,12 @@ export default function PostPage() {
         const controller = new AbortController();
         const signal = controller.signal;
 
-        (async function getPost() {
+        (async function getEvent() {
             try {
                 setLoading(true);
-                const res = await postService.getPost(signal, postId);
+                const res = await eventService.getEvent(signal, eventId);
                 if (res && !res.message) {
-                    setPost(res);
+                    setEvent(res);
                     if (user) {
                         const request = await requestService.getRequest(
                             res.owner.user_id,
@@ -50,7 +50,7 @@ export default function PostPage() {
         })();
 
         return () => controller.abort();
-    }, [postId, user]);
+    }, [eventId, user]);
 
     async function toggleLike() {
         try {
@@ -59,9 +59,9 @@ export default function PostPage() {
                 setPopupInfo({ type: 'login', content: 'Like' });
                 return;
             }
-            const res = await likeService.togglePostLike(postId, true);
-            if (res && res.message === 'post like toggled successfully') {
-                setPost((prev) => {
+            const res = await likeService.toggleEventLike(eventId, true);
+            if (res && res.message === 'event like toggled successfully') {
+                setEvent((prev) => {
                     if (prev.isLiked) {
                         return {
                             ...prev,
@@ -93,9 +93,9 @@ export default function PostPage() {
                 setPopupInfo({ type: 'login', content: 'Dislike' });
                 return;
             }
-            const res = await likeService.togglePostLike(postId, false);
-            if (res && res.message === 'post like toggled successfully') {
-                setPost((prev) => {
+            const res = await likeService.toggleEventLike(eventId, false);
+            if (res && res.message === 'event like toggled successfully') {
+                setEvent((prev) => {
                     if (prev.isDisliked) {
                         return {
                             ...prev,
@@ -127,9 +127,9 @@ export default function PostPage() {
                 setPopupInfo({ type: 'login', content: 'Follow' });
                 return;
             }
-            const res = await followerService.toggleFollow(post.owner.user_id);
+            const res = await followerService.toggleFollow(event.owner.user_id);
             if (res && res.message === 'follow toggled successfully') {
-                setPost((prev) => ({
+                setEvent((prev) => ({
                     ...prev,
                     isFollowed: !prev.isFollowed,
                 }));
@@ -146,16 +146,18 @@ export default function PostPage() {
                 setPopupInfo({ type: 'login', content: 'Save' });
                 return;
             }
-            const res = await postService.toggleSavePost(postId);
-            if (res && res.message === 'post save toggled successfully') {
+            console.log(eventId);
+            const res = await eventService.toggleSaveEvent(eventId);
+            console.log(eventId);
+            if (res && res.message === 'event save toggled successfully') {
                 toast.success(
                     `${
-                        post.isSaved
-                            ? 'Post Unsaved Successfully 🙂'
-                            : 'Post Saved Successfully 🤗'
+                        event.isSaved
+                            ? 'event Unsaved Successfully 🙂'
+                            : 'event Saved Successfully 🤗'
                     }`
                 );
-                setPost((prev) => ({ ...prev, isSaved: !prev.isSaved }));
+                setEvent((prev) => ({ ...prev, isSaved: !prev.isSaved }));
             }
         } catch (err) {
             navigate('/server-error');
@@ -171,14 +173,14 @@ export default function PostPage() {
             }
             if (!requestStatus || requestStatus === 'rejected') {
                 const res = await requestService.sendRequest(
-                    post.owner.user_id
+                    event.owner.user_id
                 );
                 if (res && !res.message) {
                     setRequestStatus('pending');
                     toast.success('Collab Request Sent Successfully 🤝');
                 }
             } else if (requestStatus === 'accepted') {
-                navigate(`/chat/${post.owner.user_id}`);
+                navigate(`/chat/${event.owner.user_id}`);
             } else {
                 toast.error('Collab Request Already Sent');
             }
@@ -189,30 +191,30 @@ export default function PostPage() {
 
     return loading ? (
         <div>loading...</div>
-    ) : Object.keys(post).length === 0 ? (
-        <div>Post Not Found !!</div>
+    ) : Object.keys(event).length === 0 ? (
+        <div>event Not Found !!</div>
     ) : (
         <div className="relative w-full h-full flex flex-col items-start justify-start gap-y-6 overflow-y-scroll">
             <div className="w-full px-2">
                 <div className="w-full flex items-start justify-start flex-col xl:flex-row gap-6">
-                    {/* post */}
+                    {/* event */}
                     <div className="w-full xl:w-[75%] h-full">
-                        {/* post image */}
+                        {/* event image */}
                         <div className="relative h-[300px] md:h-[350px] rounded-xl overflow-hidden">
                             <img
-                                src={post.post_image}
-                                alt="post image"
+                                src={event.event_image}
+                                alt="event image"
                                 className="object-cover w-full h-full"
                             />
 
                             {/* SMALL SCREEN */}
-                            {/* post category */}
+                            {/* event category */}
                             <div className="xl:hidden absolute top-2 left-2 hover:cursor-text flex items-center justify-center gap-2 bg-[#ffffff] drop-shadow-md rounded-full w-fit px-4 py-[4px]">
                                 <div className="size-[10px] fill-[#2556d1]">
                                     {icons.dot}
                                 </div>
                                 <span className="text-[#2556d1] text-[16px]">
-                                    {post.category.category_name.toUpperCase()}
+                                    {event.category.category_name.toUpperCase()}
                                 </span>
                             </div>
 
@@ -222,7 +224,7 @@ export default function PostPage() {
                                     btnText={
                                         <div
                                             className={`${
-                                                post.isSaved
+                                                event.isSaved
                                                     ? 'fill-[#4977ec] '
                                                     : 'fill-white'
                                             } size-[20px] stroke-[#4977ec] group-hover:stroke-[#2a4b9f]`}
@@ -236,17 +238,17 @@ export default function PostPage() {
                             </div>
                         </div>
 
-                        {/* post title */}
+                        {/* event title */}
                         <div className="hover:cursor-text text-2xl font-medium text-black mt-4">
-                            {post.post_title}
+                            {event.event_title}
                         </div>
 
                         <div className="flex items-center justify-between mt-3">
                             {/* statistics */}
                             <div className="hover:cursor-text text-[15px] text-[#5a5a5a]">
-                                {formatCount(post.totalViews)} views &bull;
-                                posted
-                                {' ' + formatDateRelative(post.post_createdAt)}
+                                {formatCount(event.totalViews)} views &bull; ed
+                                {' ' +
+                                    formatDateRelative(event.event_createdAt)}
                             </div>
 
                             {/* like/dislike btn */}
@@ -256,7 +258,7 @@ export default function PostPage() {
                                         <div className="flex items-center justify-center gap-2">
                                             <div
                                                 className={`${
-                                                    post.isLiked
+                                                    event.isLiked
                                                         ? 'fill-[#4977ec] stroke-[#4977ec]'
                                                         : 'fill-none stroke-black'
                                                 } size-[20px]`}
@@ -264,7 +266,7 @@ export default function PostPage() {
                                                 {icons.like}
                                             </div>
                                             <div className="text-black">
-                                                {formatCount(post.totalLikes)}
+                                                {formatCount(event.totalLikes)}
                                             </div>
                                         </div>
                                     }
@@ -276,7 +278,7 @@ export default function PostPage() {
                                         <div className="flex items-center justify-center gap-2">
                                             <div
                                                 className={`${
-                                                    post.isDisliked
+                                                    event.isDisliked
                                                         ? 'fill-[#4977ec] stroke-[#4977ec]'
                                                         : 'fill-none stroke-black'
                                                 } size-[20px]`}
@@ -285,7 +287,7 @@ export default function PostPage() {
                                             </div>
                                             <div className="text-black">
                                                 {formatCount(
-                                                    post.totalDislikes
+                                                    event.totalDislikes
                                                 )}
                                             </div>
                                         </div>
@@ -300,13 +302,13 @@ export default function PostPage() {
                     <div className="drop-shadow-md bg-[#f9f9f9] p-4 rounded-xl w-full xl:w-[25%] flex flex-col xl:pl-8 xl:pr-1 xl:mt-0 mt-4">
                         {/* BIGGER SCREEN */}
                         <div className="hidden xl:flex items-center justify-between pr-4 w-full">
-                            {/* post category */}
+                            {/* event category */}
                             <div className="hover:cursor-text flex items-center justify-center gap-2 bg-[#ffffff] drop-shadow-md rounded-full w-fit px-4 py-[4px]">
                                 <div className="size-[10px] fill-[#2556d1]">
                                     {icons.dot}
                                 </div>
                                 <span className="text-[#2556d1] text-[16px]">
-                                    {post.category.category_name.toUpperCase()}
+                                    {event.category.category_name.toUpperCase()}
                                 </span>
                             </div>
 
@@ -316,7 +318,7 @@ export default function PostPage() {
                                     btnText={
                                         <div
                                             className={`${
-                                                post.isSaved
+                                                event.isSaved
                                                     ? 'fill-[#4977ec] '
                                                     : 'fill-white'
                                             } size-[20px] stroke-[#4977ec] group-hover:stroke-[#2a4b9f]`}
@@ -337,15 +339,15 @@ export default function PostPage() {
                                 <div
                                     onClick={(e) => {
                                         navigate(
-                                            `/channel/${post.owner.user_id}`
+                                            `/channel/${event.owner.user_id}`
                                         );
                                     }}
                                     className="w-fit cursor-pointer"
                                 >
                                     <div className="size-[60px] xl:size-[160px]">
                                         <img
-                                            alt="post owner avatar"
-                                            src={post.owner.user_avatar}
+                                            alt="event owner avatar"
+                                            src={event.owner.user_avatar}
                                             className="size-full object-cover rounded-full hover:brightness-90"
                                         />
                                     </div>
@@ -355,35 +357,37 @@ export default function PostPage() {
                                     <div
                                         onClick={(e) => {
                                             navigate(
-                                                `/channel/${post.owner.user_id}`
+                                                `/channel/${event.owner.user_id}`
                                             );
                                         }}
                                         className="w-fit cursor-pointer text-ellipsis line-clamp-1 text-lg xl:text-[21px] hover:text-[#5c5c5c] font-medium text-black"
                                     >
-                                        {post.owner.user_firstName}{' '}
-                                        {post.owner.user_lastName}
+                                        {event.owner.user_firstName}{' '}
+                                        {event.owner.user_lastName}
                                     </div>
 
                                     <div
                                         onClick={(e) => {
                                             navigate(
-                                                `/channel/${post.owner.user_id}`
+                                                `/channel/${event.owner.user_id}`
                                             );
                                         }}
                                         className="w-fit cursor-pointer text-black hover:text-[#5c5c5c] text-lg"
                                     >
-                                        @{post.owner.user_name}
+                                        @{event.owner.user_name}
                                     </div>
                                 </div>
                             </div>
 
                             <div className="text-black text-lg">
-                                {user?.user_name === post.owner.user_name ? (
+                                {user?.user_name === event.owner.user_name ? (
                                     <Button
                                         btnText="Edit"
-                                        title="Edit Post"
+                                        title="Edit event"
                                         onClick={() =>
-                                            navigate(`/update/${post.post_id}`)
+                                            navigate(
+                                                `/update/${event.event_id}`
+                                            )
                                         }
                                         className="rounded-md text-white py-[4px] px-4 bg-[#4977ec] hover:bg-[#3b62c2]"
                                     />
@@ -391,7 +395,7 @@ export default function PostPage() {
                                     <div className="flex gap-2 sm:gap-4">
                                         <Button
                                             btnText={
-                                                post.isFollowed
+                                                event.isFollowed
                                                     ? 'Unfollow'
                                                     : 'Follow'
                                             }
@@ -422,18 +426,18 @@ export default function PostPage() {
 
                 {/* content */}
                 <div className="text-black w-full text-md mt-6 bg-[#f9f9f9] shadow-md shadow-gray-300 rounded-xl overflow-hidden p-8">
-                    {parse(post.post_content)}
+                    {parse(event.event_content)}
                 </div>
             </div>
 
-            {/* recemendations */}
+            {/* Recommendations */}
             <div className="w-full">
                 <hr className="mt-0 mb-6 w-full" />
                 <h2 className="text-black underline underline-offset-4 mb-8">
-                    Recommended Similar Posts
+                    Recommended Similar Events
                 </h2>
                 <div className="w-full">
-                    <Recemendations category={post.category.category_name} />
+                    <Recommendations category={event.category.category_name} />
                 </div>
             </div>
 

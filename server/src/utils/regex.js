@@ -59,6 +59,10 @@ export default function verifyRegex(name, value) {
                 }
             }
 
+            case 'organization': {
+                return /^a-zA-Z$/;
+            }
+
             default: {
                 console.log("Doesn't have a defined regex.", name);
                 return false;

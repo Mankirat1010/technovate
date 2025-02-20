@@ -32,18 +32,18 @@ const eventSchema = new Schema({
         default: true,
         required: true,
     },
-    event_duration:{
-        type:String,
-        required:true,
+    event_duration: {
+        type: String,
+        required: true,
     },
-    event_venue:{
-        type:String,
-        required:true,
+    event_venue: {
+        type: String,
+        required: true,
     },
-    event_date:{
-        type:Date,
-        required:true,
-        index:true
+    event_date: {
+        type: Date,
+        required: true,
+        index: true,
     },
     event_category: {
         type: String,

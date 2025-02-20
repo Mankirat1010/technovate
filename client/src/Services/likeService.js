@@ -1,8 +1,8 @@
 class LikeService {
-    async togglePostLike(postId, likedStatus) {
+    async toggleEventLike(eventId, likedStatus) {
         try {
             const res = await fetch(
-                `/api/likes/toggle-post-like/${postId}?likedStatus=${likedStatus}`,
+                `/api/likes/toggle-event-like/${eventId}?likedStatus=${likedStatus}`,
                 {
                     method: 'PATCH',
                     credentials: 'include',
@@ -45,7 +45,7 @@ class LikeService {
         }
     }
 
-    async getLikedPosts(signal, limit = 10, page = 1, orderBy = 'desc') {
+    async getLikedEvents(signal, limit = 10, page = 1, orderBy = 'desc') {
         try {
             const res = await fetch(
                 `/api/likes?limit=${limit}&page=${page}&orderBy=${orderBy}`,

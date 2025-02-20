@@ -1,21 +1,21 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { formatCount, formatDateRelative } from '../../Utils';
-import { Button, PostCardView } from '..';
+import { Button, EventCardView } from '..';
 import { icons } from '../../Assets/icons';
 import parse from 'html-react-parser';
 import { memo } from 'react';
 
-const PostListView = memo(({ post, reference, children }) => {
+const EventListView = memo(({ event, reference, children }) => {
     const {
-        post_id,
+        event_id,
         category,
-        post_content,
-        post_image,
+        event_content,
+        event_image,
         totalViews,
-        post_title,
-        post_createdAt,
+        event_title,
+        event_createdAt,
         owner,
-    } = post;
+    } = event;
     const { category_name } = category;
     const { user_id, user_name, user_avatar, user_firstName, user_lastName } =
         owner;
@@ -26,8 +26,8 @@ const PostListView = memo(({ post, reference, children }) => {
         <div ref={reference}>
             {/* CARD VIEW */}
             <div className="sm:hidden">
-                <PostCardView
-                    post={post}
+                <EventCardView
+                    event={event}
                     showOwnerInfo={true}
                     children={children}
                 />
@@ -35,21 +35,21 @@ const PostListView = memo(({ post, reference, children }) => {
 
             {/* LIST VIEW */}
             <div
-                onClick={() => navigate(`/post/${post_id}`)} // items-start justify-start
+                onClick={() => navigate(`/event/${event_id}`)} // items-start justify-start
                 className="mb-6 hidden relative cursor-pointer sm:flex flex-row w-full p-4 gap-x-6 bg-white drop-shadow-md rounded-2xl overflow-hidden"
             >
-                {/* post image */}
+                {/* event image */}
                 <div className="h-[300px] drop-shadow-md w-[45%] rounded-xl overflow-hidden">
                     <img
-                        alt="post image"
-                        src={post_image}
+                        alt="event image"
+                        src={event_image}
                         className="h-full object-cover w-full"
                     />
                 </div>
 
                 <div className="w-[55%] pt-4 realtive flex flex-col items-start justify-start">
                     <div className="flex items-start justify-between w-full">
-                        {/* post category */}
+                        {/* event category */}
                         <div className="hover:cursor-text flex items-center justify-center gap-2 bg-[#ffffff] drop-shadow-md rounded-full w-fit px-3 py-[2px]">
                             <div className="size-[9px] fill-[#2556d1]">
                                 {icons.dot}
@@ -61,18 +61,18 @@ const PostListView = memo(({ post, reference, children }) => {
 
                         {/* statistics */}
                         <div className="hover:cursor-text text-[15px] text-[#5a5a5a]">
-                            {formatCount(totalViews)} views &bull; posted
-                            {' ' + formatDateRelative(post_createdAt)}
+                            {formatCount(totalViews)} views &bull; evented
+                            {' ' + formatDateRelative(event_createdAt)}
                         </div>
                     </div>
 
-                    {/* post title */}
+                    {/* event title */}
                     <div className="hover:cursor-text text-2xl font-medium text-black text-ellipsis line-clamp-1 mt-5">
-                        {post_title}
+                        {event_title}
                     </div>
 
                     <div className="hover:cursor-text text-[17px] text-black text-ellipsis line-clamp-2 mt-4">
-                        {parse(post_content)}
+                        {parse(event_content)}
                     </div>
 
                     {/* user info */}
@@ -85,7 +85,7 @@ const PostListView = memo(({ post, reference, children }) => {
                         <div className="drop-shadow-md">
                             <div className="size-[50px]">
                                 <img
-                                    alt="post owner avatar"
+                                    alt="event owner avatar"
                                     src={user_avatar}
                                     className="size-full object-cover rounded-full hover:brightness-90"
                                 />
@@ -113,7 +113,7 @@ const PostListView = memo(({ post, reference, children }) => {
                                     </div>
                                 </div>
                             }
-                            onClick={() => navigate(`/post/${post_id}`)}
+                            onClick={() => navigate(`/event/${event_id}`)}
                             className="rounded-md py-2 px-3 bg-[#4977ec] hover:bg-[#3b62c2]"
                         />
                     </div>
@@ -125,4 +125,4 @@ const PostListView = memo(({ post, reference, children }) => {
     );
 });
 
-export default PostListView;
+export default EventListView;

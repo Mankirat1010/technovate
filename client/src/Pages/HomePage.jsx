@@ -1,38 +1,38 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { PostListView } from '../Components';
-import { postService } from '../Services';
+import { EventListView } from '../Components';
+import { eventService } from '../Services';
 import { paginate } from '../Utils';
 import { icons } from '../Assets/icons';
 import { LIMIT } from '../Constants/constants';
 import { useSearchContext } from '../Context';
 
 export default function HomePage() {
-    const [posts, setPosts] = useState([]);
-    const [postsInfo, setPostsInfo] = useState({});
+    const [events, setEvents] = useState([]);
+    const [eventsInfo, setEventsInfo] = useState({});
     const [page, setPage] = useState(1);
     const { search } = useSearchContext();
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
     // pagination
-    const paginateRef = paginate(postsInfo?.hasNextPage, loading, setPage);
+    const paginateRef = paginate(eventsInfo?.hasNextPage, loading, setPage);
 
     useEffect(() => {
         const controller = new AbortController();
         const signal = controller.signal;
 
-        (async function getPosts() {
+        (async function getEvents() {
             try {
                 setLoading(true);
-                const res = await postService.getRandomPosts(
+                const res = await eventService.getRandomEvents(
                     signal,
                     page,
                     LIMIT
                 );
                 if (res && !res.message) {
-                    setPosts((prev) => [...prev, ...res.posts]);
-                    setPostsInfo(res.postsInfo);
+                    setEvents((prev) => [...prev, ...res.events]);
+                    setEventsInfo(res.eventsInfo);
                 }
             } catch (err) {
                 navigate('/server-error');
@@ -46,18 +46,18 @@ export default function HomePage() {
         };
     }, [page]);
 
-    const postElements = posts
-        ?.filter((post) => {
-            const title = post.post_title.toLowerCase();
-            if (search && title.includes(search.toLowerCase())) return post;
-            if (!search) return post;
+    const eventElements = events
+        ?.filter((event) => {
+            const title = event.event_title.toLowerCase();
+            if (search && title.includes(search.toLowerCase())) return event;
+            if (!search) return event;
         })
-        .map((post, index) => (
-            <PostListView
-                key={post.post_id}
-                post={post}
+        .map((event, index) => (
+            <EventListView
+                key={event.event_id}
+                event={event}
                 reference={
-                    index + 1 === posts.length && postsInfo?.hasNextPage
+                    index + 1 === events.length && eventsInfo?.hasNextPage
                         ? paginateRef
                         : null
                 }
@@ -66,7 +66,7 @@ export default function HomePage() {
 
     return (
         <div>
-            {postElements.length > 0 && <div>{postElements}</div>}
+            {eventElements.length > 0 && <div>{eventElements}</div>}
 
             {loading ? (
                 page === 1 ? (
@@ -81,7 +81,7 @@ export default function HomePage() {
                     </div>
                 )
             ) : (
-                postElements.length === 0 && <div>No posts found !!</div>
+                eventElements.length === 0 && <div>No events found !!</div>
             )}
         </div>
     );

@@ -19,16 +19,16 @@ import UpdateChannelDetails from './User/UpdateChannelDetails';
 import UpdatePassword from './User/UpdatePassword';
 import UpdateAvatar from './User/UpdateAvatar';
 import UpdateCoverImage from './User/UpdateCoverImage';
-import PostCardView from './Post/PostCardView';
-import PostListView from './Post/PostListView';
-import LikedPostView from './Post/LikedPostView';
-import SavedPostView from './Post/SavedPostView';
-import Recemendations from './Post/Recemendations';
-import AdminPostRow from './Post/AdminPostRow';
+import EventCardView from './Event/EventCardView';
+import EventListView from './Event/EventListView';
+import LikedEventView from './Event/LikedEventView';
+import SavedEventView from './Event/SavedEventView';
+import Recommendations from './Event/Recommendations';
+import AdminEventRow from './Event/AdminEventRow';
 import ChannelAbout from './Channel/ChannelAbout';
-import ChannelPosts from './Channel/ChannelPosts';
-import Comments from './Comments/Comments';
-import Comment from './Comments/Comment';
+import ChannelEvents from './Channel/ChannelEvents';
+import Comments from './Comment/Comments';
+import Comment from './Comment/Comment';
 import ChatHeader from './Chats/Layout/ChatHeader';
 import ChatSidebar from './Chats/Layout/ChatSidebar';
 import ChatNavbar from './Chats/Layout/ChatNavbar';
@@ -66,16 +66,16 @@ export {
     UpdatePassword,
     UpdateAvatar,
     UpdateCoverImage,
-    PostCardView,
-    PostListView,
-    Recemendations,
-    AdminPostRow,
+    EventCardView,
+    EventListView,
+    Recommendations,
+    AdminEventRow,
     ChannelAbout,
-    ChannelPosts,
+    ChannelEvents,
     Comment,
     Comments,
-    LikedPostView,
-    SavedPostView,
+    LikedEventView,
+    SavedEventView,
     Popup,
     CustomToast,
     ChatHeader,

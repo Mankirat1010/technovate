@@ -1,18 +1,18 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { postService } from '../../Services';
-import { Button, PostListView } from '..';
+import { eventService } from '../../Services';
+import { Button, EventListView } from '..';
 import { icons } from '../../Assets/icons';
 
-export default function SavedPostView({ savedPost, reference }) {
-    const { post_id } = savedPost;
+export default function SavedEventView({ savedEvent, reference }) {
+    const { event_id } = savedEvent;
     const [isSaved, setIsSaved] = useState(true);
     const navigate = useNavigate();
 
     async function toggleSave() {
         try {
-            const res = await postService.toggleSavePost(post_id);
-            if (res && res.message === 'post save toggled successfully') {
+            const res = await eventService.toggleSaveEvent(event_id);
+            if (res && res.message === 'event save toggled successfully') {
                 setIsSaved((prev) => !prev);
             }
         } catch (err) {
@@ -20,11 +20,11 @@ export default function SavedPostView({ savedPost, reference }) {
         }
     }
 
-    const { post, ...rest } = savedPost;
-    const modifiedPost = { ...rest, ...post };
+    const { event, ...rest } = savedEvent;
+    const modifiedEvent = { ...rest, ...event };
 
     return (
-        <PostListView post={modifiedPost} reference={reference}>
+        <EventListView event={modifiedEvent} reference={reference}>
             {/* children */}
             <div
                 className="absolute top-2 right-2"
@@ -46,6 +46,6 @@ export default function SavedPostView({ savedPost, reference }) {
                     onClick={toggleSave}
                 />
             </div>
-        </PostListView>
+        </EventListView>
     );
 }

@@ -1,63 +1,31 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { fileRestrictions, verifyExpression } from '../Utils';
 import { Button, RTE } from '../Components';
-import { verifyExpression, fileRestrictions } from '../Utils';
-import { postService } from '../Services';
-import { useUserContext } from '../Context';
+import { eventService } from '../Services';
+import { icons } from '../Assets/icons';
 import { MAX_FILE_SIZE } from '../Constants/constants';
 import toast from 'react-hot-toast';
 
-export default function UpdatePostPage() {
+export default function AddPostPage() {
     const [inputs, setInputs] = useState({
         title: '',
-        postImage: null,
+        eventImage: null,
         content: '',
         categoryId: '',
+        venue: '',
+        direction: '',
+        time: ''
     });
+    const [thumbnailPreview, setThumbnailPreview] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [disabled, setDisabled] = useState(false);
+    const navigate = useNavigate();
+    const [categories, setCategories] = useState([]);
     const [error, setError] = useState({
         title: '',
-        postImage: '',
+        eventImage: '',
     });
-    const { postId } = useParams();
-    const [post, setPost] = useState({});
-    const [thumbnailPreview, setThumbnailPreview] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [uploading, setUploading] = useState(false);
-    const [disabled, setDisabled] = useState(false);
-    const [defaultRTEValue, setDefaultRTEValue] = useState('');
-    const navigate = useNavigate();
-    const { user } = useUserContext();
-    const [categories, setCategories] = useState([]);
-
-    useEffect(() => {
-        const controller = new AbortController();
-        const signal = controller.signal;
-        (async function getPost() {
-            try {
-                setLoading(true);
-                const res = await postService.getPost(signal, postId);
-                if (res && !res.message) {
-                    setPost(res);
-                    setInputs({
-                        title: res.post_title,
-                        postImage: null,
-                        content: res.post_content,
-                        category: res.category_name,
-                    });
-                    setDefaultRTEValue(res.post_content);
-                    setThumbnailPreview(res.post_image);
-                }
-            } catch (err) {
-                navigate('/server-error');
-            } finally {
-                setLoading(false);
-            }
-        })();
-
-        return () => {
-            controller.abort();
-        };
-    }, []);
 
     function handleChange(e) {
         const { name, value } = e.target;
@@ -65,8 +33,8 @@ export default function UpdatePostPage() {
     }
 
     function handleFileChange(e) {
-        const { files, name } = e.target;
-        if (files && files[0]) {
+        const { files } = e.target;
+        if (files?.[0]) {
             const file = files[0];
 
             if (!fileRestrictions(file)) {
@@ -75,7 +43,7 @@ export default function UpdatePostPage() {
                 );
             }
 
-            setInputs((prev) => ({ ...prev, [name]: file }));
+            setInputs((prev) => ({ ...prev, postImage: file }));
             setThumbnailPreview(URL.createObjectURL(file));
         } else {
             setError((prevError) => ({
@@ -95,29 +63,16 @@ export default function UpdatePostPage() {
     async function handleSubmit(e) {
         e.preventDefault();
         try {
-            setUploading(true);
-            setDisabled(true);
-            const res = await postService.updatePostDetails(
-                {
-                    title: inputs.title,
-                    categoryId: inputs.categoryId,
-                    content: inputs.content,
-                },
-                postId
-            );
-            const res1 = await postService.updatePostImage(
-                inputs.postImage,
-                postId
-            );
-            if (res && res1 && !res.message && !res1.message) {
-                toast.success('Post Updated Successfully 🤗');
-                navigate(`/post/${postId}`);
+            setLoading(true);
+            const res = await eventService.addEvent(inputs);
+            if (res && !res.message) {
+                toast.success('Event Created Successfully 🤗');
+                navigate(`/event/${res.event_id}`);
             }
         } catch (err) {
             navigate('/server-error');
         } finally {
-            setUploading(false);
-            setDisabled(false);
+            setLoading(false);
         }
     }
 
@@ -146,7 +101,7 @@ export default function UpdatePostPage() {
 
     const categoryElements = !categories.length
         ? []
-        : categories.map((category) => (
+        : categories?.map((category) => (
               <label
                   htmlFor={category.category_name}
                   key={category.category_name}
@@ -164,19 +119,17 @@ export default function UpdatePostPage() {
               </label>
           ));
 
-    return loading ? (
-        <div>loading...</div>
-    ) : user.user_name === post.userName ? (
-        <div className="w-full h-full overflow-scroll px-10">
+    return (
+        <div className="w-full h-full overflow-scroll">
             <h2 className="text-[#252525] w-full text-center mb-8 underline underline-offset-2">
-                Update a Post
+                Add a New Event
             </h2>
             <form
                 onSubmit={handleSubmit}
-                className="w-full h-full flex flex-col md:flex-row items-start justify-start gap-10"
+                className="w-full h-full flex flex-col lg:flex-row items-start justify-start gap-10"
             >
-                <div className="w-full md:w-[70%] h-full">
-                    <div className="w-full flex items-center justify-between gap-10">
+                <div className="w-full lg:w-[70%] h-full">
+                    <div className="w-full flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-10">
                         <div className="w-full">
                             <div className="flex items-center justify-start gap-2">
                                 <div className="bg-white z-[1] ml-3 px-2 w-fit text-[1.1rem] relative top-3 font-medium">
@@ -189,7 +142,7 @@ export default function UpdatePostPage() {
                             <div>
                                 <input
                                     type="text"
-                                    placeholder="Enter Post Title"
+                                    placeholder="Enter post Title"
                                     name="title"
                                     id="title"
                                     onChange={handleChange}
@@ -204,7 +157,6 @@ export default function UpdatePostPage() {
                                 </div>
                             )}
                         </div>
-
                         <div className="w-full">
                             <div className="flex items-center justify-start gap-2">
                                 <div className="bg-white z-[1] ml-3 px-2 w-fit text-[1.1rem] relative top-3 font-medium">
@@ -213,6 +165,12 @@ export default function UpdatePostPage() {
                                         Thumbnail :
                                     </label>
                                 </div>
+
+                                {error.postImage && (
+                                    <div className="pt-[0.09rem] text-red-500 text-sm">
+                                        {error.postImage}
+                                    </div>
+                                )}
                             </div>
                             <div>
                                 <input
@@ -223,20 +181,69 @@ export default function UpdatePostPage() {
                                     className="shadow-md shadow-[#f7f7f7] py-[15px] rounded-[5px] pl-[10px] border border-gray-500 w-full"
                                 />
                             </div>
-                            {error.postImage && (
+                        </div>
+                    </div>
+                    <div className="w-full flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-10">
+                        <div className="w-full">
+                            <div className="flex items-center justify-start gap-2">
+                                <div className="bg-white z-[1] ml-3 px-2 w-fit text-[1.1rem] relative top-3 font-medium">
+                                    <label htmlFor="title">
+                                        <span className="text-red-500">* </span>
+                                        Venue :
+                                    </label>
+                                </div>
+                            </div>
+                            <div>
+                                <input
+                                    type="text"
+                                    placeholder="Enter Venue"
+                                    name="venue"
+                                    id="venue"
+                                    onChange={handleChange}
+                                    value={inputs.venue}
+                                    onBlur={handleBlur}
+                                    className="shadow-md shadow-[#f7f7f7] py-[18px] rounded-[5px] pl-[10px] w-full border-[0.01rem] border-gray-500 bg-transparent"
+                                />
+                            </div>
+                            {error.venue && (
                                 <div className="pt-[0.09rem] text-red-500 text-sm">
-                                    {error.postImage}
+                                    {error.venue}
                                 </div>
                             )}
                         </div>
-                    </div>
+                        <div className="w-full">
+                            <div className="flex items-center justify-start gap-2">
+                                <div className="bg-white z-[1] ml-3 px-2 w-fit text-[1.1rem] relative top-3 font-medium">
+                                    <label htmlFor="postImage">
+                                        <span className="text-red-500">* </span>
+                                        Duration :
+                                    </label>
+                                </div>
 
-                    <div className="w-full mt-10">
+                                {error.duration && (
+                                    <div className="pt-[0.09rem] text-red-500 text-sm">
+                                        {error.duration}
+                                    </div>
+                                )}
+                            </div>
+                            <div>
+                                <input
+                                    type="time"
+                                    onChange={handleFileChange}
+                                    name="duration"
+                                    id="duration"
+                                    className="shadow-md shadow-[#f7f7f7] py-[15px] rounded-[5px] pl-[10px] border border-gray-500 w-full"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    
+
+                    <div className="w-full mt-6">
                         <div className="text-lg font-medium">
                             <span className="text-red-500">* </span>Content :
                         </div>
                         <RTE
-                            defaultValue={defaultRTEValue}
                             onChange={() =>
                                 setInputs((prev) => ({
                                     ...prev,
@@ -247,20 +254,20 @@ export default function UpdatePostPage() {
                     </div>
                 </div>
 
-                <div className="h-full w-full md:w-[30%] flex flex-col items-center">
-                    <div className="drop-shadow-md w-full flex items-center justify-center">
-                        <div className="max-w-[400px] h-[220px] md:max-w-[300px] w-full md:h-[180px] rounded-lg overflow-hidden">
+                <div className="drop-shadow-md h-full w-full lg:w-[30%] mt-6 flex flex-col items-center">
+                    <div className="w-full flex items-center justify-center">
+                        <div className="drop-shadow-md border-[0.01rem] border-gray-500 max-w-[350px] w-full h-[200px] rounded-lg overflow-hidden">
                             {thumbnailPreview ? (
                                 <img
                                     src={thumbnailPreview}
                                     alt="thumbnail preview"
-                                    className="object-cover h-full w-full border-[0.01rem] border-[#838383] rounded-lg"
+                                    className="object-cover h-full w-full"
                                 />
                             ) : (
-                                <div className="flex flex-col items-center justify-center gap-2 h-full w-full border-[0.01rem] border-[#838383] rounded-xl">
+                                <div className="flex flex-col items-center justify-center gap-2 h-full w-full">
                                     <div
                                         className="bg-[#f9f9f9] p-2
-                                    rounded-full drop-shadow-md w-fit"
+                                    rounded-full w-fit"
                                     >
                                         <div className="size-[20px]">
                                             {icons.image}
@@ -274,29 +281,27 @@ export default function UpdatePostPage() {
                         </div>
                     </div>
 
-                    <div className="drop-shadow-md bg-[#f9f9f9] p-6 max-w-[300px] md:max-w-[280px] w-full gap-6 mt-8 flex flex-col items-center">
-                        <div className="text-xl font-medium">
+                    <div className="border-[0.01rem] border-gray-500 rounded-lg p-6 max-w-[350px] w-full gap-6 mt-8 flex flex-col items-center">
+                        <div className="text-xl font-medium text-center">
                             <span className="text-red-500">* </span>Select a
-                            Category :
+                            Category
                         </div>
-                        <div className="flex flex-col items-center justify-start gap-3">
+                        <div className="flex flex-wrap items-center justify-center gap-3">
                             {categoryElements}
                         </div>
                     </div>
 
-                    <div className="w-full text-center mt-10">
+                    <div className="w-full text-center mt-7">
                         <Button
-                            btnText={uploading ? 'Updating...' : 'Update'}
+                            btnText={loading ? 'Uploading...' : 'Upload'}
                             type="submit"
                             disabled={disabled}
                             onMouseOver={onMouseOver}
-                            className="text-white rounded-md py-2 text-lg w-full max-w-[300px] md:max-w-[280px] bg-[#4977ec] hover:bg-[#3b62c2]"
+                            className="text-white rounded-md py-2 text-lg w-full max-w-[350px] bg-[#4977ec] hover:bg-[#3b62c2]"
                         />
                     </div>
                 </div>
             </form>
         </div>
-    ) : (
-        <div>You're not authorized for this operation.</div>
     );
 }

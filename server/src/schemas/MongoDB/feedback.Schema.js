@@ -1,8 +1,8 @@
 import { model, Schema } from 'mongoose';
 import { v4 as uuid } from 'uuid';
 
-const commentSchema = new Schema({
-    comment_id: {
+const feedBackSchema = new Schema({
+    feedBack_id: {
         type: String,
         unique: true,
         required: true,
@@ -13,20 +13,20 @@ const commentSchema = new Schema({
         ref: 'User',
         required: true,
     },
-    post_id: {
+    event_id: {
         type: String,
-        ref: 'Post',
+        ref: 'Event',
         required: true,
         index: true,
     },
-    comment_content: {
+    feedBack_content: {
         type: String,
         required: true,
     },
-    comment_createdAt: {
+    feedBack_createdAt: {
         type: Date,
         default: Date.now(),
     },
 });
 
-export const Comment = model('Comment', commentSchema);
+export const FeedBack = model('FeedBack', feedBackSchema);

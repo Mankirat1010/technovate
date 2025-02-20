@@ -46,13 +46,13 @@ const userSchema = new Schema({
     organization_name: {
         type: String,
         index: true,
-        default:""
+        default: '',
     },
-    event_id:{
-        type:String, 
-        index:true,
-        ref:"Event",
-        default:""
+    event_id: {
+        type: String,
+        index: true,
+        ref: 'Event',
+        default: '',
     },
     user_createdAt: {
         type: Date,
